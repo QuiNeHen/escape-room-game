@@ -1,0 +1,90 @@
+body {
+background: #ffdd8a;
+border: none;
+border-radius: 10px;
+color: #3a2a00;
+font-size: 20px;
+font-weight: bold;
+cursor: pointer;
+transition: 0.25s;
+margin-top: 20px;
+}
+button:hover {
+transform: scale(1.1);
+box-shadow: 0 0 25px #ffdd8a;
+}
+
+
+.titleGlow {
+font-size: 42px;
+text-shadow: 0 0 25px #ffe9b5;
+}
+
+
+/* ————— Note ————— */
+.note3d {
+width: 200px;
+height: 120px;
+background: #f5e6be;
+border: 4px solid #cbb98a;
+margin: 40px auto;
+cursor: pointer;
+box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+transform: rotateX(8deg) rotateY(-6deg);
+transition: 0.3s;
+}
+.note3d:hover {
+transform: rotateX(15deg) rotateY(-10deg) scale(1.08);
+box-shadow: 0 15px 60px rgba(255,240,180,0.4);
+}
+
+
+/* ————— Cards ————— */
+.cardRow {
+display: flex;
+justify-content: center;
+gap: 22px;
+margin-top: 20px;
+}
+
+
+.card3d {
+width: 120px;
+height: 170px;
+background: #fff;
+color: black;
+font-size: 32px;
+font-weight: bold;
+border-radius: 14px;
+display: flex;
+justify-content: center;
+align-items: center;
+box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+transition: 0.3s;
+transform: perspective(600px) rotateX(12deg) rotateY(-10deg);
+}
+.card3d:hover {
+transform: perspective(600px) rotateX(20deg) rotateY(-4deg) scale(1.05);
+box-shadow: 0 20px 70px rgba(255,230,150,0.5);
+}
+
+
+.pick {
+cursor: pointer;
+}
+
+
+.fadeOut {
+opacity: 0.12;
+filter: blur(2px);
+}
+
+
+.success {
+color: #b2ffda;
+text-shadow: 0 0 25px #9ffff3;
+}
+.fail {
+color: #ff6767;
+text-shadow: 0 0 25px #ff3b3b;
+}
