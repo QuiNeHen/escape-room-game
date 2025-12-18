@@ -40,7 +40,7 @@ export default function GameController() {
   }, []);
 
   const startGame = () => setCurrentScreen("instructions");
-  const goToRoom1 = () => setCurrentScreen("room2");
+  const goToRoom1 = () => setCurrentScreen("room1");
   const goToRoom2 = () => setCurrentScreen("room2");
   const goToRoom3 = () => setCurrentScreen("room3");
   const goToRoom4 = () => setCurrentScreen("room4");
@@ -102,7 +102,7 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Version: 2.1 | Update: [18/12/2025]
+            Version: 2.2 | Update: [18/12/2025]
           </p>
         </div>
 
