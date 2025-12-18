@@ -85,8 +85,8 @@ export default function Room3({ onComplete }) {
       const clientX = e.clientX || e.changedTouches?.[0]?.clientX || 0;
       const clientY = e.clientY || e.changedTouches?.[0]?.clientY || 0;
       
-      // Kiểm tra nếu thả vào vùng bàn (dưới màn hình)
-      const tableArea = clientY > window.innerHeight * 0.5;
+      // Kiểm tra nếu thả vào vùng bàn (phía dưới và bên phải màn hình)
+      const tableArea = clientY > window.innerHeight * 0.5 && clientX > window.innerWidth * 0.4;
       
       if (tableArea && !booksOnTable.includes(dragging)) {
         // Thêm sách vào bàn
@@ -264,7 +264,7 @@ export default function Room3({ onComplete }) {
               } else if (isOnTable) {
                 // Trên bàn - xếp theo thứ tự
                 const tableIndex = booksOnTable.indexOf(book.id);
-                displayX = window.innerWidth * 0.15 + tableIndex * 90;
+                displayX = window.innerWidth * 0.45 + tableIndex * 90;
                 displayY = window.innerHeight * 0.72;
               } else if (pos) {
                 // Trên kệ - dùng vị trí kệ
@@ -398,7 +398,7 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"

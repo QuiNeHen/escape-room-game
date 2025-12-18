@@ -20,7 +20,7 @@ export default function Room4({ onComplete }) {
     { id: 5, text: "Thích vận động" },
     { id: 6, text: "Không nhuộm tóc" },
     { id: 7, text: "Cao trên 1m7" },
-    { id: 8, text: "Có bệnh sạch sẽ" },
+    { id: 8, text: "Không có bệnh sạch sẽ" },
     { id: 9, text: "Không hút thuốc" },
     { id: 10, text: "Biết rap" }
   ];
@@ -35,7 +35,7 @@ export default function Room4({ onComplete }) {
 5. Thích vận động
 6. Không nhuộm tóc
 7. Cao trên 1m7
-8. Có bệnh sạch sẽ
+8. Không có bệnh sạch sẽ
 9. Không hút thuốc
 10. Biết rap
 `
@@ -98,7 +98,7 @@ Chủ Nhật: Gặp bạn bè`
 
     // Thẻ gym - dạng thẻ có chữ GYM
     { id: "gym", type: "card", position: { left: "78%", top: "18%" }, 
-      detail: { title: "THẺ HỘI VIÊN GYM", content: "FITNESS CENTER PREMIUM\n\nHọ tên: Nguyễn Thành Đạt\nLoại thẻ: VIP Premium\nHạn sử dụng: 12 tháng\n(Từ 01/01/2025 đến 31/12/2025)" }
+      detail: { title: "THẺ HỘI VIÊN GYM", content: "FITNESS CENTER PREMIUM\n\nHọ tên: GỌI TÔI LÀ DEMO\nLoại thẻ: VIP Premium\nHạn sử dụng: 12 tháng\n(Từ 01/01/2025 đến 31/12/2025)" }
     },
 
     // Ảnh đôi - dạng icon ảnh, bấm vào hiện ảnh thật
@@ -527,7 +527,7 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"
@@ -595,7 +595,7 @@ const styles = {
     borderRadius: "10px",
     transition: "all 0.3s ease",
     fontWeight: "bold",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   roomContainer: {
     width: "100%",
@@ -820,7 +820,7 @@ const styles = {
     color: "#c9b896",
     fontWeight: "bold",
     textShadow: "0 2px 10px rgba(0,0,0,0.9)",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   item: {
     position: "absolute",
@@ -853,7 +853,7 @@ const styles = {
     fontWeight: "bold",
     color: "#00ff00",
     textShadow: "0 0 20px #00ff00, 0 2px 8px rgba(0,0,0,0.9)",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     letterSpacing: "3px"
   },
   gymCardSubtitle: {
@@ -861,7 +861,7 @@ const styles = {
     color: "#ffcc00",
     fontWeight: "bold",
     marginTop: "5px",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     letterSpacing: "2px"
   },
   photoFrame: {
@@ -901,7 +901,7 @@ const styles = {
     color: "#333",
     fontWeight: "bold",
     textAlign: "center",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     background: "rgba(255,255,255,0.8)",
     padding: "3px 8px",
     borderRadius: "4px"
@@ -1024,7 +1024,7 @@ const styles = {
     padding: "10px 20px",
     borderRadius: "8px",
     border: "3px solid #000",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   cupZoomPanel: {
     background: "rgba(0,0,0,0.98)",
@@ -1110,7 +1110,7 @@ const styles = {
     transform: "rotate(15deg)",
     background: "rgba(0,255,0,0.1)",
     boxShadow: "0 0 30px rgba(0,255,0,0.5)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   closeBtn: {
     position: "absolute",
@@ -1128,7 +1128,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     zIndex: 10
   },
   itemDetailIcon: {
@@ -1143,14 +1143,14 @@ const styles = {
     textAlign: "center",
     marginBottom: "25px",
     textShadow: "0 0 25px rgba(220,20,60,0.8)",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   itemDetailText: {
     fontSize: "1.2rem",
     color: "#c9b896",
     lineHeight: "1.8",
     whiteSpace: "pre-wrap",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     textAlign: "left"
   },
   notebookPanel: {
@@ -1176,7 +1176,7 @@ const styles = {
     textAlign: "center",
     marginBottom: "30px",
     textShadow: "0 0 25px rgba(220,20,60,0.8)",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     borderBottom: "3px solid rgba(139,0,0,0.5)",
     paddingBottom: "15px"
   },
@@ -1185,7 +1185,7 @@ const styles = {
     color: "#c9b896",
     lineHeight: "2",
     whiteSpace: "pre-wrap",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     textAlign: "left"
   },
   notebookNav: {
@@ -1206,13 +1206,13 @@ const styles = {
     borderRadius: "10px",
     fontWeight: "bold",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   pageIndicator: {
     fontSize: "1.2rem",
     color: "#999",
     fontWeight: "bold",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   lockModal: {
     position: "fixed",
@@ -1248,7 +1248,7 @@ const styles = {
     fontSize: "1rem",
     color: "#999",
     marginBottom: "35px",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   standardsRow: {
     display: "flex",
@@ -1274,7 +1274,7 @@ const styles = {
     fontWeight: "bold",
     color: "#DC143C",
     textShadow: "0 0 20px rgba(220,20,60,0.8)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   standardCheckmark: {
     position: "absolute",
@@ -1288,7 +1288,7 @@ const styles = {
     fontSize: "1.2rem",
     color: "#999",
     marginBottom: "25px",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   unlockBtn: {
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(100,0,0,0.9))",
@@ -1303,7 +1303,7 @@ const styles = {
     width: "100%",
     boxShadow: "0 8px 30px rgba(139,0,0,0.6)",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   cancelBtn: {
     background: "transparent",
@@ -1315,7 +1315,7 @@ const styles = {
     borderRadius: "10px",
     width: "100%",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   winBox: {
     textAlign: "center",
@@ -1347,7 +1347,7 @@ const styles = {
     color: "#c9b896",
     marginBottom: "12px",
     lineHeight: "1.8",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   winSubtext: {
     fontSize: "1.3rem",
@@ -1392,7 +1392,7 @@ const styles = {
     letterSpacing: "2px",
     boxShadow: "0 10px 35px rgba(139,0,0,0.7)",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   }
 };
 

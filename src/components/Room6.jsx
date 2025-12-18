@@ -313,7 +313,7 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"

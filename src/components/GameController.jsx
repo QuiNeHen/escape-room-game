@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TitleScreen from "./TitleScreen";
 import Room1 from "./Room1";
 import Room2 from "./Room2";
@@ -7,10 +7,37 @@ import Room4 from "./Room4";
 import Room5 from "./Room5";
 import Room6 from "./Room6";
 import Room7 from "./Room7";
-import QRImg from "../Img/QR.jpg"
+import QRImg from "../Img/QR.jpg";
+
+// Load Google Fonts hỗ trợ tiếng Việt
+const loadFonts = () => {
+  if (!document.querySelector('#game-fonts')) {
+    const link = document.createElement('link');
+    link.id = 'game-fonts';
+    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+};
 
 export default function GameController() {
   const [currentScreen, setCurrentScreen] = useState("title");
+
+  // Init: Load fonts và prevent scrollbars
+  useEffect(() => {
+    loadFonts();
+    
+    // Prevent scrollbars
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   const startGame = () => setCurrentScreen("instructions");
   const goToRoom1 = () => setCurrentScreen("room1");
@@ -53,7 +80,7 @@ function InstructionsScreen({ onContinue }) {
             sẽ biết đến chương trình Trốn Thoát Khỏi Mật Thất.
             Game được lấy ý tưởng từ các câu đố kinh điển trong chương trình và hiện thực hóa nó
             qua trò chơi để chúng ta có thể tương tác với các vật thể như trong câu đố để có cảm giác 
-            như đang hóa thân vào người chơi đang thử thác chương trình !
+            như đang hóa thân vào người chơi đang thử thách chương trình !
           </p>
           <p style={styles.instructionText}>
             • Bạn sẽ phải vượt qua các phòng với các câu đố logic khác nhau
@@ -88,8 +115,12 @@ function InstructionsScreen({ onContinue }) {
 }
 
 function FinaleScreen({ onRestart }) {
-  const qrCodeUrl = QRImg; // Thay link QR code của bạn
-  const feedbackUrl = "https://forms.gle/34jBiCFk55VNVAam7"; // Thay link Google Form của bạn
+  const qrCodeUrl = QRImg;
+  const feedbackUrl = "https://forms.gle/34jBiCFk55VNVAam7";
+
+  const handleFormClick = () => {
+    window.open(feedbackUrl, '_blank');
+  };
 
   return (
     <div style={styles.finaleContainer}>
@@ -109,8 +140,8 @@ function FinaleScreen({ onRestart }) {
           {/* Feedback Form */}
           <div style={styles.formSection}>
             <h3 style={styles.feedbackTitle}>📝 GÓP Ý CỦA BẠN</h3>
-            <div style={styles.formBox}>
-              <p style={styles.formText}>https://forms.gle/34jBiCFk55VNVAam7</p>
+            <div style={styles.formBox} onClick={handleFormClick}>
+              <p style={styles.formLinkText}>{feedbackUrl}</p>
             </div>
             <p style={styles.formText}>Click vào để điền form góp ý</p>
           </div>
@@ -153,96 +184,103 @@ const styles = {
   },
   instructionsContent: {
     textAlign: "center",
-    maxWidth: "800px",
-    padding: "40px",
+    maxWidth: "min(90vw, 800px)",
+    maxHeight: "90vh",
+    padding: "clamp(20px, 4vh, 40px) clamp(20px, 4vw, 40px)",
     background: "rgba(10, 10, 10, 0.95)",
     border: "6px solid rgba(139,0,0,0.7)",
     borderRadius: "25px",
     boxShadow: "0 40px 120px rgba(139,0,0,0.8), inset 0 0 60px rgba(139,0,0,0.1)",
-    animation: "scaleIn 0.8s ease-out 0.5s both"
+    animation: "scaleIn 0.8s ease-out 0.5s both",
+    overflow: "auto"
   },
   instructionsTitle: {
-    fontSize: "2.5rem",
+    fontSize: "clamp(2rem, 5vw, 2.5rem)",
     color: "#DC143C",
     textShadow: "0 0 60px rgba(220,20,60,0.9), 0 0 100px rgba(220,20,60,0.5)",
-    marginBottom: "30px",
+    marginBottom: "clamp(20px, 3vh, 30px)",
     animation: "titleGlow 2s ease-in-out infinite",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   instructionsBox: {
     background: "rgba(20,20,20,0.8)",
     border: "3px solid rgba(139,0,0,0.5)",
     borderRadius: "15px",
-    padding: "25px",
-    marginBottom: "25px",
+    padding: "clamp(15px, 2.5vh, 25px)",
+    marginBottom: "clamp(15px, 2.5vh, 25px)",
     textAlign: "left"
   },
   sectionTitle: {
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 3vw, 1.5rem)",
     color: "#8B0000",
-    marginBottom: "15px",
-    fontFamily: "Arial, sans-serif",
+    marginBottom: "clamp(10px, 1.5vh, 15px)",
+    fontFamily: "'Noto Sans', Arial, sans-serif",
     textShadow: "0 0 20px rgba(139,0,0,0.8)"
   },
   instructionText: {
-    fontSize: "1.1rem",
+    fontSize: "clamp(0.9rem, 2vw, 1.1rem)",
     color: "#c9b896",
     lineHeight: "1.8",
-    marginBottom: "10px",
-    fontFamily: "Arial, sans-serif"
+    marginBottom: "clamp(8px, 1vh, 10px)",
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   startGameBtn: {
     background: "linear-gradient(135deg, rgba(139,0,0,0.9), rgba(100,0,0,0.95))",
     border: "4px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "18px 50px",
-    fontSize: "1.3rem",
+    padding: "clamp(14px, 1.8vh, 18px) clamp(35px, 5vw, 50px)",
+    fontSize: "clamp(1.1rem, 2.5vw, 1.3rem)",
     cursor: "pointer",
     borderRadius: "15px",
     fontWeight: "bold",
     letterSpacing: "3px",
     boxShadow: "0 15px 50px rgba(139,0,0,0.8)",
     transition: "all 0.4s ease",
-    fontFamily: "Arial, sans-serif",
-    marginTop: "20px"
+    fontFamily: "'Noto Sans', Arial, sans-serif",
+    marginTop: "clamp(15px, 2vh, 20px)"
   },
   finaleContent: {
     textAlign: "center",
-    maxWidth: "900px",
-    padding: "35px",
+    maxWidth: "min(95vw, 900px)",
+    maxHeight: "92vh",
+    padding: "clamp(20px, 3.5vh, 35px) clamp(20px, 3.5vw, 35px)",
     background: "rgba(10, 10, 10, 0.95)",
     border: "6px solid rgba(139,0,0,0.7)",
     borderRadius: "25px",
     boxShadow: "0 40px 120px rgba(139,0,0,0.8), inset 0 0 60px rgba(139,0,0,0.1)",
-    animation: "scaleIn 0.8s ease-out 0.5s both"
+    animation: "scaleIn 0.8s ease-out 0.5s both",
+    overflow: "auto"
   },
   finaleTitle: {
-    fontSize: "2.5rem",
+    fontSize: "clamp(1.8rem, 4.5vw, 2.5rem)",
     color: "#DC143C",
     textShadow: "0 0 60px rgba(220,20,60,0.9), 0 0 100px rgba(220,20,60,0.5)",
-    marginBottom: "30px",
+    marginBottom: "clamp(20px, 3vh, 30px)",
     animation: "titleGlow 2s ease-in-out infinite",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   feedbackSection: {
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
-    gap: "30px",
-    marginBottom: "30px"
+    gap: "clamp(15px, 3vw, 30px)",
+    marginBottom: "clamp(20px, 3vh, 30px)"
   },
   qrSection: {
-    flex: 1,
+    flex: "1 1 250px",
+    minWidth: "250px",
     maxWidth: "300px"
   },
   formSection: {
-    flex: 1,
+    flex: "1 1 250px",
+    minWidth: "250px",
     maxWidth: "400px"
   },
   feedbackTitle: {
-    fontSize: "1.2rem",
+    fontSize: "clamp(1rem, 2.2vw, 1.2rem)",
     color: "#8B0000",
-    marginBottom: "15px",
-    fontFamily: "Arial, sans-serif",
+    marginBottom: "clamp(10px, 1.5vh, 15px)",
+    fontFamily: "'Noto Sans', Arial, sans-serif",
     textShadow: "0 0 20px rgba(139,0,0,0.8)",
     fontWeight: "bold"
   },
@@ -257,53 +295,60 @@ const styles = {
     justifyContent: "center"
   },
   qrImage: {
-    width: "200px",
-    height: "200px",
-    borderRadius: "10px"
+    width: "clamp(150px, 20vw, 200px)",
+    height: "clamp(150px, 20vw, 200px)",
+    borderRadius: "10px",
+    objectFit: "contain"
   },
   qrText: {
-    fontSize: "0.9rem",
+    fontSize: "clamp(0.8rem, 1.5vw, 0.9rem)",
     color: "#999",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   formBox: {
     background: "rgba(20,20,20,0.8)",
     border: "4px solid rgba(139,0,0,0.5)",
     borderRadius: "15px",
-    padding: "15px",
+    padding: "clamp(12px, 1.5vh, 15px)",
     marginBottom: "10px",
     cursor: "pointer",
-    transition: "all 0.3s ease"
+    transition: "all 0.3s ease",
+    minHeight: "80px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  formImage: {
-    width: "100%",
-    height: "150px",
-    borderRadius: "10px"
+  formLinkText: {
+    fontSize: "clamp(0.75rem, 1.8vw, 0.95rem)",
+    color: "#00c8ff",
+    fontFamily: "'Noto Sans', Arial, sans-serif",
+    wordBreak: "break-all",
+    textDecoration: "underline"
   },
   formText: {
-    fontSize: "0.9rem",
+    fontSize: "clamp(0.8rem, 1.5vw, 0.9rem)",
     color: "#999",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   thanksBox: {
     background: "rgba(20,20,20,0.8)",
     border: "3px solid rgba(139,0,0,0.5)",
     borderRadius: "15px",
-    padding: "25px",
-    marginBottom: "25px"
+    padding: "clamp(15px, 2.5vh, 25px)",
+    marginBottom: "clamp(15px, 2.5vh, 25px)"
   },
   thanksText: {
-    fontSize: "1.4rem",
+    fontSize: "clamp(1.1rem, 2.5vw, 1.4rem)",
     color: "#c9b896",
-    marginBottom: "15px",
-    fontFamily: "Georgia, serif",
+    marginBottom: "clamp(12px, 1.5vh, 15px)",
+    fontFamily: "'Noto Serif', Georgia, serif",
     lineHeight: "1.8"
   },
   adviceText: {
-    fontSize: "1rem",
+    fontSize: "clamp(0.85rem, 1.8vw, 1rem)",
     color: "#999",
-    marginBottom: "10px",
-    fontFamily: "Arial, sans-serif",
+    marginBottom: "clamp(8px, 1vh, 10px)",
+    fontFamily: "'Noto Sans', Arial, sans-serif",
     lineHeight: "1.6",
     textAlign: "left"
   },
@@ -311,70 +356,76 @@ const styles = {
     background: "linear-gradient(135deg, rgba(139,0,0,0.9), rgba(100,0,0,0.95))",
     border: "4px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "16px 45px",
-    fontSize: "1.2rem",
+    padding: "clamp(12px, 1.6vh, 16px) clamp(30px, 4.5vw, 45px)",
+    fontSize: "clamp(1rem, 2.2vw, 1.2rem)",
     cursor: "pointer",
     borderRadius: "12px",
     fontWeight: "bold",
     letterSpacing: "2px",
     boxShadow: "0 15px 50px rgba(139,0,0,0.8)",
     transition: "all 0.4s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   }
 };
 
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
+  * {
+    box-sizing: border-box;
+  }
+  
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden !important;
+    width: 100vw;
+    height: 100vh;
+  }
+  
   @keyframes finaleAppear {
     from { opacity: 0; }
     to { opacity: 1; }
   }
+  
   @keyframes scaleIn {
     from { transform: scale(0.7); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
+  
   @keyframes titleGlow {
     0%, 100% { text-shadow: 0 0 60px rgba(220,20,60,0.9), 0 0 100px rgba(220,20,60,0.5); }
     50% { text-shadow: 0 0 80px rgba(220,20,60,1), 0 0 120px rgba(220,20,60,0.7); }
   }
-  @keyframes statAppear {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  @keyframes celebrate {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.1) rotate(-5deg); }
-    75% { transform: scale(1.1) rotate(5deg); }
-  }
+  
   button:hover {
     transform: translateY(-8px) scale(1.05);
     box-shadow: 0 20px 70px rgba(139,0,0,1);
     background: linear-gradient(135deg, rgba(180,0,0,0.95), rgba(139,0,0,1));
   }
+  
   .formBox:hover {
     transform: scale(1.05);
     border-color: rgba(139,0,0,0.8);
   }
-  .statItem:nth-child(1) {
-    animation-delay: 0.2s;
+  
+  /* Custom scrollbar cho overflow areas */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
-  .statItem:nth-child(2) {
-    animation-delay: 0.3s;
+  
+  *::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
   }
-  .statItem:nth-child(3) {
-    animation-delay: 0.4s;
+  
+  *::-webkit-scrollbar-thumb {
+    background: rgba(139,0,0,0.5);
+    border-radius: 10px;
   }
-  .statItem:nth-child(4) {
-    animation-delay: 0.5s;
-  }
-  .statItem:nth-child(5) {
-    animation-delay: 0.6s;
-  }
-  .statItem:nth-child(6) {
-    animation-delay: 0.7s;
-  }
-  .statItem:nth-child(7) {
-    animation-delay: 0.8s;
+  
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(139,0,0,0.7);
   }
 `;
 document.head.appendChild(styleSheet);

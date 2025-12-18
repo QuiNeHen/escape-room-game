@@ -2,6 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import laughSound from "../Audio/tieng_ma_cuoi-www_tiengdong_com.mp3";
 import voiceSound from "../Audio/mp3-output-ttsfree(dot)com.mp3";
 
+// Load Google Fonts hỗ trợ tiếng Việt
+const loadFonts = () => {
+  if (!document.querySelector('#room2-fonts')) {
+    const link = document.createElement('link');
+    link.id = 'room2-fonts';
+    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+};
+
 export default function Room2({onWin}) {
   const [stage, setStage] = useState("intro");
   const [deckOpen, setDeckOpen] = useState(false);
@@ -20,10 +31,23 @@ export default function Room2({onWin}) {
 
   const marbles = [
     ...Array(10).fill(null).map((_, i) => ({ id: `red-${i}`, color: "#8B0000", name: "Đỏ" })),
-    ...Array(5).fill(null).map((_, i) => ({ id: `yellow-${i}`, color: "#8B8B00", name: "Vàng" })),
+    ...Array(3).fill(null).map((_, i) => ({ id: `yellow-${i}`, color: "#8B8B00", name: "Vàng" })),
     ...Array(7).fill(null).map((_, i) => ({ id: `blue-${i}`, color: "#00008B", name: "Xanh Dương" })),
     ...Array(8).fill(null).map((_, i) => ({ id: `green-${i}`, color: "#006400", name: "Xanh Lá" }))
   ];
+
+  useEffect(() => {
+    loadFonts();
+    
+    // Prevent scrollbars
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   useEffect(() => {
     if (deckOpen && !jumpscareTriggered) {
@@ -60,9 +84,9 @@ export default function Room2({onWin}) {
     if (deckOpen) {
       const positions = {};
       const placed = [];
-      const minDistance = 70;
-      const areaWidth = 800;
-      const areaHeight = 600;
+      const minDistance = Math.min(window.innerWidth, window.innerHeight) * 0.07;
+      const areaWidth = Math.min(window.innerWidth * 0.7, 800);
+      const areaHeight = Math.min(window.innerHeight * 0.6, 600);
 
       marbles.forEach((marble) => {
         let x, y;
@@ -185,18 +209,15 @@ export default function Room2({onWin}) {
             <div style={styles.vignette}></div>
             <div style={styles.crackOverlay}></div>
             
-            {/* Blood stains */}
-            <div style={{...styles.bloodStain, top: "25%", right: "18%", width: "100px", height: "70px"}}></div>
-            <div style={{...styles.bloodStain, bottom: "15%", left: "22%", width: "90px", height: "90px", opacity: 0.4}}></div>
+            <div style={{...styles.bloodStain, top: "25%", right: "18%", width: "clamp(80px, 10vw, 100px)", height: "clamp(56px, 7vh, 70px)"}}></div>
+            <div style={{...styles.bloodStain, bottom: "15%", left: "22%", width: "clamp(72px, 9vw, 90px)", height: "clamp(72px, 9vh, 90px)", opacity: 0.4}}></div>
 
             {!deckOpen && (
               <>
-                {/* Chains */}
                 <div style={{...styles.chains, top: "10%", left: "8%", animationDelay: "0s"}}>⛓️</div>
                 <div style={{...styles.chains, top: "8%", right: "12%", animationDelay: "0.8s"}}>⛓️</div>
                 <div style={{...styles.chains, bottom: "20%", right: "15%", animationDelay: "1.5s"}}>⛓️</div>
 
-                {/* Đèn trần với hiệu ứng nhấp nháy */}
                 <div style={styles.ceilingLamp}>
                   <div style={styles.lampChain}></div>
                   <div style={styles.lampShade}>
@@ -206,7 +227,6 @@ export default function Room2({onWin}) {
                   </div>
                 </div>
 
-                {/* Tranh cổ kinh dị */}
                 <div style={styles.oldPainting}>
                   <div style={styles.paintingFrame}></div>
                   <div style={styles.paintingCanvas}>
@@ -214,7 +234,6 @@ export default function Room2({onWin}) {
                   </div>
                 </div>
 
-                {/* Kệ sách tối */}
                 <div style={styles.bookshelf}>
                   <div style={styles.shelfBack}></div>
                   <div style={styles.shelf1}></div>
@@ -225,18 +244,15 @@ export default function Room2({onWin}) {
                   <div style={styles.cobweb}>🕸️</div>
                 </div>
 
-                {/* Đồng hồ kinh dị */}
                 <div style={styles.oldClock}>
                   <div style={styles.clockFace}>🕰️</div>
                   <div style={styles.clockGlow}></div>
                 </div>
 
-                {/* Thảm sàn tối */}
                 <div style={styles.floorRug}></div>
               </>
             )}
 
-            {/* Cửa */}
             {!deckOpen && (
               <div
                 style={{
@@ -280,7 +296,6 @@ export default function Room2({onWin}) {
               </div>
             )}
 
-            {/* Bàn */}
             {!deckOpen && (
               <div style={styles.tableWrapper}>
                 <div style={styles.tableShadow}></div>
@@ -315,7 +330,6 @@ export default function Room2({onWin}) {
               </div>
             )}
 
-            {/* Khay bi fullscreen */}
             {deckOpen && (
               <div style={styles.deckOpenView}>
                 <button
@@ -347,7 +361,6 @@ export default function Room2({onWin}) {
               </div>
             )}
 
-            {/* Jumpscare */}
             {jumpscareShown && (
               <div style={{...styles.jumpscareOverlay, animation: "jumpscareAppear 0.5s ease-out"}} onClick={() => setJumpscareShown(false)}>
                 <div style={styles.jumpscareBox}>
@@ -364,7 +377,6 @@ export default function Room2({onWin}) {
               </div>
             )}
 
-            {/* Controls */}
             <div style={styles.controls}>
               {jumpscareTriggered && !deckOpen && (
                 <div style={styles.hintBox}>
@@ -374,7 +386,6 @@ export default function Room2({onWin}) {
             </div>
           </div>
 
-          {/* Modal mật khẩu */}
           {lockOpen && (
             <div style={styles.lockModal} onClick={() => setLockOpen(false)}>
               <div style={styles.lockPanel} onClick={e => e.stopPropagation()}>
@@ -406,8 +417,6 @@ export default function Room2({onWin}) {
             <p style={styles.winText}>
               Mật khẩu: <span style={styles.correctAnswer}>0 7 0 3</span>
             </p>
-            {/* <p style={styles.winSubtext}>0 TÍM • 7 XANH DƯƠNG • 0 CAM • 3 CÒN LẠI</p> */}
-            {/* <p style={styles.winSubtext}>Bạn đã thoát khỏi cả hai phòng!</p> */}
             <div style={styles.sparkles}>✨ ⭐ ✨ ⭐ ✨</div>
           </div>
         </div>
@@ -448,7 +457,7 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"
@@ -478,38 +487,40 @@ const styles = {
     zIndex: 100
   },
   storyBox: {
-    maxWidth: "700px",
+    maxWidth: "clamp(500px, 70vw, 700px)",
     textAlign: "center",
-    padding: "40px",
+    padding: "clamp(30px, 5vw, 40px)",
     background: "rgba(10, 10, 10, 0.95)",
     border: "4px solid rgba(139,0,0,0.6)",
     borderRadius: "15px",
     boxShadow: "0 25px 80px rgba(0,0,0,0.95)"
   },
   introTitle: {
-    fontSize: "3rem",
+    fontSize: "clamp(2.2rem, 4vw, 3rem)",
     color: "#8B0000",
-    marginBottom: "30px",
-    textShadow: "0 0 35px rgba(139, 0, 0, 0.8)"
+    marginBottom: "clamp(20px, 3vh, 30px)",
+    textShadow: "0 0 35px rgba(139, 0, 0, 0.8)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   storyText: {
-    fontSize: "1.35rem",
-    lineHeight: "2",
-    marginBottom: "25px",
-    color: "#999"
+    fontSize: "clamp(1.1rem, 1.8vw, 1.35rem)",
+    lineHeight: "clamp(1.6, 2vh, 2)",
+    marginBottom: "clamp(18px, 2.5vh, 25px)",
+    color: "#999",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   continueBtn: {
-    marginTop: "30px",
+    marginTop: "clamp(20px, 3vh, 30px)",
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
     border: "3px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "16px 45px",
-    fontSize: "1.2rem",
+    padding: "clamp(12px, 1.6vh, 16px) clamp(35px, 4.5vw, 45px)",
+    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
     cursor: "pointer",
     borderRadius: "10px",
     transition: "all 0.3s ease",
     fontWeight: "bold",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   roomContainer: {
     width: "100%",
@@ -546,7 +557,7 @@ const styles = {
   },
   chains: {
     position: "absolute",
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
     color: "#333",
     opacity: 0.3,
     textShadow: "0 2px 8px rgba(0,0,0,0.9)",
@@ -557,32 +568,32 @@ const styles = {
     position: "absolute",
     top: "5%",
     left: "50%",
-    transform: "translateX(-50%)",
+    transform: "translateX(-50%) scale(clamp(0.8, 1vw, 1))",
     zIndex: 8
   },
   lampChain: {
     width: "3px",
-    height: "80px",
+    height: "clamp(64px, 8vh, 80px)",
     background: "linear-gradient(to bottom, #222, #000)",
     margin: "0 auto",
     boxShadow: "0 2px 8px rgba(0,0,0,0.9)"
   },
   lampShade: {
     position: "relative",
-    width: "120px",
-    height: "60px"
+    width: "clamp(96px, 12vw, 120px)",
+    height: "clamp(48px, 6vh, 60px)"
   },
   lampTop: {
-    width: "50px",
-    height: "12px",
+    width: "clamp(40px, 5vw, 50px)",
+    height: "clamp(10px, 1.2vh, 12px)",
     background: "linear-gradient(135deg, #2a2520, #1a1510)",
     borderRadius: "50%",
     margin: "0 auto",
     boxShadow: "0 5px 20px rgba(0,0,0,0.8)"
   },
   lampBottom: {
-    width: "120px",
-    height: "60px",
+    width: "clamp(96px, 12vw, 120px)",
+    height: "clamp(48px, 6vh, 60px)",
     background: "linear-gradient(135deg, #3a3025 0%, #2a2520 50%, #1a1510 100%)",
     borderRadius: "0 0 50% 50%",
     boxShadow: "0 10px 40px rgba(0,0,0,0.9), inset 0 -5px 20px rgba(0,0,0,0.7)",
@@ -590,11 +601,11 @@ const styles = {
     margin: "0 auto"
   },
   lampGlow: {
-    width: "180px",
-    height: "180px",
+    width: "clamp(144px, 18vw, 180px)",
+    height: "clamp(144px, 18vh, 180px)",
     background: "radial-gradient(circle, rgba(139,0,0,0.2), transparent 70%)",
     position: "absolute",
-    bottom: "-50px",
+    bottom: "clamp(-40px, -5vh, -50px)",
     left: "50%",
     transform: "translateX(-50%)",
     animation: "lightFlicker 4s ease-in-out infinite",
@@ -604,26 +615,27 @@ const styles = {
     position: "absolute",
     top: "15%",
     left: "10%",
-    zIndex: 6
+    zIndex: 6,
+    transform: "scale(clamp(0.8, 1vw, 1))"
   },
   paintingFrame: {
-    width: "150px",
-    height: "120px",
+    width: "clamp(120px, 15vw, 150px)",
+    height: "clamp(96px, 12vh, 120px)",
     background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 100%)",
-    border: "8px solid #000",
+    border: "clamp(6px, 0.8vw, 8px) solid #000",
     boxShadow: "0 10px 35px rgba(0,0,0,0.9), inset 0 2px 8px rgba(0,0,0,0.8)",
     borderRadius: "5px"
   },
   paintingCanvas: {
     position: "absolute",
-    inset: "8px",
+    inset: "clamp(6px, 0.8vw, 8px)",
     background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
   },
   skullInFrame: {
-    fontSize: "3.5rem",
+    fontSize: "clamp(2.8rem, 3.5vw, 3.5rem)",
     opacity: 0.6,
     filter: "grayscale(1) brightness(0.5)",
     animation: "pulse 5s ease-in-out infinite"
@@ -632,9 +644,10 @@ const styles = {
     position: "absolute",
     top: "20%",
     right: "8%",
-    width: "180px",
-    height: "380px",
-    zIndex: 6
+    width: "clamp(144px, 18vw, 180px)",
+    height: "clamp(304px, 38vh, 380px)",
+    zIndex: 6,
+    transform: "scale(clamp(0.8, 1vw, 1))"
   },
   shelfBack: {
     position: "absolute",
@@ -645,26 +658,26 @@ const styles = {
   },
   shelf1: {
     position: "absolute",
-    width: "calc(100% - 20px)",
-    height: "12px",
-    left: "10px",
+    width: "calc(100% - clamp(16px, 2vw, 20px))",
+    height: "clamp(10px, 1.2vh, 12px)",
+    left: "clamp(8px, 1vw, 10px)",
     top: "30%",
     background: "linear-gradient(to bottom, #2a2520, #1a1510)",
     boxShadow: "0 8px 20px rgba(0,0,0,0.9)"
   },
   shelf2: {
     position: "absolute",
-    width: "calc(100% - 20px)",
-    height: "12px",
-    left: "10px",
+    width: "calc(100% - clamp(16px, 2vw, 20px))",
+    height: "clamp(10px, 1.2vh, 12px)",
+    left: "clamp(8px, 1vw, 10px)",
     top: "65%",
     background: "linear-gradient(to bottom, #2a2520, #1a1510)",
     boxShadow: "0 8px 20px rgba(0,0,0,0.9)"
   },
   book: {
     position: "absolute",
-    width: "22px",
-    height: "70px",
+    width: "clamp(18px, 2.2vw, 22px)",
+    height: "clamp(56px, 7vh, 70px)",
     background: "linear-gradient(135deg, #2a1810, #1a1008, #0a0504)",
     border: "1px solid #000",
     borderRadius: "2px",
@@ -672,9 +685,9 @@ const styles = {
   },
   cobweb: {
     position: "absolute",
-    top: "-8px",
-    right: "-8px",
-    fontSize: "2rem",
+    top: "clamp(-6px, -0.8vh, -8px)",
+    right: "clamp(-6px, -0.8vw, -8px)",
+    fontSize: "clamp(1.6rem, 2vw, 2rem)",
     opacity: 0.4,
     filter: "grayscale(1)",
     animation: "swing 4s ease-in-out infinite"
@@ -683,17 +696,18 @@ const styles = {
     position: "absolute",
     top: "12%",
     right: "28%",
-    zIndex: 6
+    zIndex: 6,
+    transform: "scale(clamp(0.8, 1vw, 1))"
   },
   clockFace: {
-    fontSize: "3rem",
+    fontSize: "clamp(2.4rem, 3vw, 3rem)",
     filter: "brightness(0.6) grayscale(0.8)",
     animation: "swing 4s ease-in-out infinite"
   },
   clockGlow: {
     position: "absolute",
-    width: "80px",
-    height: "80px",
+    width: "clamp(64px, 8vw, 80px)",
+    height: "clamp(64px, 8vh, 80px)",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -705,9 +719,9 @@ const styles = {
     position: "absolute",
     bottom: "2%",
     left: "50%",
-    transform: "translateX(-50%) perspective(800px) rotateX(65deg)",
-    width: "400px",
-    height: "250px",
+    transform: "translateX(-50%) perspective(800px) rotateX(65deg) scale(clamp(0.7, 1vw, 1))",
+    width: "clamp(320px, 40vw, 400px)",
+    height: "clamp(200px, 25vh, 250px)",
     background: "repeating-linear-gradient(45deg, #1a1510, #1a1510 10px, #0f0a08 10px, #0f0a08 20px)",
     borderRadius: "15px",
     boxShadow: "0 20px 70px rgba(0,0,0,0.9)",
@@ -719,15 +733,15 @@ const styles = {
     position: "absolute",
     top: "8%",
     left: "50%",
-    transform: "translateX(-50%)",
+    transform: "translateX(-50%) scale(clamp(0.7, 1vw, 1))",
     zIndex: 10
   },
   doorFrame: {
     position: "absolute",
-    width: "240px",
-    height: "340px",
-    top: "-20px",
-    left: "-20px",
+    width: "clamp(192px, 24vw, 240px)",
+    height: "clamp(272px, 34vh, 340px)",
+    top: "clamp(-16px, -2vh, -20px)",
+    left: "clamp(-16px, -2vw, -20px)",
     zIndex: -1
   },
   doorFrameTop: {
@@ -735,7 +749,7 @@ const styles = {
     left: "0",
     top: "0",
     width: "100%",
-    height: "20px",
+    height: "clamp(16px, 2vh, 20px)",
     background: "linear-gradient(to bottom, #000 0%, #0a0a0a 60%, #1a1510 100%)",
     borderRadius: "12px 12px 0 0",
     boxShadow: "0 8px 25px rgba(0,0,0,0.95)"
@@ -744,7 +758,7 @@ const styles = {
     position: "absolute",
     left: "0",
     top: "0",
-    width: "20px",
+    width: "clamp(16px, 2vw, 20px)",
     height: "100%",
     background: "linear-gradient(to right, #000 0%, #0a0a0a 60%, #1a1510 100%)",
     borderRadius: "12px 0 0 8px",
@@ -754,7 +768,7 @@ const styles = {
     position: "absolute",
     right: "0",
     top: "0",
-    width: "20px",
+    width: "clamp(16px, 2vw, 20px)",
     height: "100%",
     background: "linear-gradient(to left, #000 0%, #0a0a0a 60%, #1a1510 100%)",
     borderRadius: "0 12px 8px 0",
@@ -762,8 +776,8 @@ const styles = {
   },
   door3D: {
     position: "relative",
-    width: "200px",
-    height: "320px"
+    width: "clamp(160px, 20vw, 200px)",
+    height: "clamp(256px, 32vh, 320px)"
   },
   doorShadow: {
     position: "absolute",
@@ -776,26 +790,26 @@ const styles = {
     width: "100%",
     height: "100%",
     background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
-    border: "8px solid #1a1510",
+    border: "clamp(6px, 0.8vw, 8px) solid #1a1510",
     borderRadius: "15px 15px 2px 2px",
     boxShadow: "inset 0 3px 25px rgba(0,0,0,0.95), 0 15px 60px rgba(0,0,0,0.9)",
     transform: "rotateX(2deg)"
   },
   doorLine1: {
     position: "absolute",
-    width: "calc(100% - 30px)",
+    width: "calc(100% - clamp(24px, 3vw, 30px))",
     height: "3px",
     top: "38%",
-    left: "15px",
+    left: "clamp(12px, 1.5vw, 15px)",
     background: "linear-gradient(90deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
     opacity: 0.6
   },
   doorLine2: {
     position: "absolute",
     width: "3px",
-    height: "calc(100% - 30px)",
+    height: "calc(100% - clamp(24px, 3vh, 30px))",
     left: "50%",
-    top: "15px",
+    top: "clamp(12px, 1.5vh, 15px)",
     background: "linear-gradient(180deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
     opacity: 0.6
   },
@@ -803,7 +817,7 @@ const styles = {
     position: "absolute",
     bottom: "20%",
     right: "25%",
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 1.5vw, 1.5rem)",
     opacity: 0.6,
     animation: "drip 3s ease-in-out infinite"
   },
@@ -811,14 +825,14 @@ const styles = {
     position: "absolute",
     top: "50%",
     left: "78%",
-    transform: "translate(-50%, -50%)",
+    transform: "translate(-50%, -50%) scale(clamp(0.8, 1vw, 1))",
     transition: "all 0.4s ease",
     cursor: "pointer",
     zIndex: 20
   },
   lockBody: {
-    width: "35px",
-    height: "45px",
+    width: "clamp(28px, 3.5vw, 35px)",
+    height: "clamp(36px, 4.5vh, 45px)",
     background: "linear-gradient(135deg, #3a3530 0%, #2a2520 15%, #1a1510 100%)",
     borderRadius: "8px",
     boxShadow: "inset 0 2px 8px rgba(0,0,0,0.9), 0 4px 18px rgba(0,0,0,0.9)",
@@ -827,20 +841,20 @@ const styles = {
   },
   lockShackle: {
     position: "absolute",
-    width: "20px",
-    height: "22px",
-    top: "-18px",
+    width: "clamp(16px, 2vw, 20px)",
+    height: "clamp(18px, 2.2vh, 22px)",
+    top: "clamp(-14px, -1.8vh, -18px)",
     left: "50%",
     transform: "translateX(-50%)",
-    border: "4px solid #3a3530",
+    border: "clamp(3px, 0.4vw, 4px) solid #3a3530",
     borderBottom: "none",
     borderRadius: "10px 10px 0 0",
     boxShadow: "inset 0 2px 8px rgba(0,0,0,0.9)"
   },
   lockKeyhole: {
     position: "absolute",
-    width: "8px",
-    height: "12px",
+    width: "clamp(6px, 0.8vw, 8px)",
+    height: "clamp(10px, 1.2vh, 12px)",
     background: "#000",
     borderRadius: "50% 50% 0 0",
     top: "50%",
@@ -852,14 +866,14 @@ const styles = {
     position: "absolute",
     bottom: "5%",
     left: "50%",
-    transform: "translateX(-50%) perspective(1200px) rotateX(25deg)",
+    transform: "translateX(-50%) perspective(1200px) rotateX(25deg) scale(clamp(0.6, 1vw, 1))",
     zIndex: 5
   },
   tableShadow: {
     position: "absolute",
-    width: "950px",
-    height: "650px",
-    top: "35px",
+    width: "clamp(760px, 95vw, 950px)",
+    height: "clamp(520px, 65vh, 650px)",
+    top: "clamp(28px, 3.5vh, 35px)",
     left: "50%",
     transform: "translateX(-50%)",
     background: "radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 75%)",
@@ -868,31 +882,31 @@ const styles = {
   },
   tableTop: {
     position: "relative",
-    width: "900px",
-    height: "600px"
+    width: "clamp(720px, 90vw, 900px)",
+    height: "clamp(480px, 60vh, 600px)"
   },
   tableEdge: {
     position: "absolute",
     width: "100%",
     height: "100%",
     background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
-    borderRadius: "20px",
+    borderRadius: "clamp(16px, 2vw, 20px)",
     boxShadow: "0 25px 70px rgba(0,0,0,0.95)"
   },
   tableSurface: {
     position: "absolute",
-    width: "calc(100% - 30px)",
-    height: "calc(100% - 30px)",
-    top: "15px",
-    left: "15px",
+    width: "calc(100% - clamp(24px, 3vw, 30px))",
+    height: "calc(100% - clamp(24px, 3vh, 30px))",
+    top: "clamp(12px, 1.5vh, 15px)",
+    left: "clamp(12px, 1.5vw, 15px)",
     background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 30%, #050302 50%, #0f0a08 70%, #1a1510 100%)",
-    borderRadius: "15px",
+    borderRadius: "clamp(12px, 1.5vw, 15px)",
     boxShadow: "inset 0 5px 25px rgba(0,0,0,0.9)"
   },
   tableLeg: {
     position: "absolute",
-    width: "70px",
-    height: "280px",
+    width: "clamp(56px, 7vw, 70px)",
+    height: "clamp(224px, 28vh, 280px)",
     background: "linear-gradient(to bottom, #2a2520 0%, #1a1510 15%, #0f0a08 40%, #050302 70%, #000 100%)",
     borderRadius: "10px",
     boxShadow: "0 20px 60px rgba(0,0,0,0.95)",
@@ -908,20 +922,20 @@ const styles = {
   },
   trayShadow: {
     position: "absolute",
-    width: "200px",
-    height: "200px",
+    width: "clamp(160px, 20vw, 200px)",
+    height: "clamp(160px, 20vh, 200px)",
     background: "rgba(0,0,0,0.8)",
     borderRadius: "50%",
     filter: "blur(25px)",
-    top: "10px",
-    left: "10px"
+    top: "clamp(8px, 1vh, 10px)",
+    left: "clamp(8px, 1vw, 10px)"
   },
   trayBody: {
     position: "relative",
-    width: "200px",
-    height: "200px",
+    width: "clamp(160px, 20vw, 200px)",
+    height: "clamp(160px, 20vh, 200px)",
     background: "radial-gradient(circle, #1a1510 0%, #0f0a08 100%)",
-    border: "5px solid #000",
+    border: "clamp(4px, 0.5vw, 5px) solid #000",
     borderRadius: "50%",
     display: "flex",
     flexDirection: "column",
@@ -931,21 +945,21 @@ const styles = {
   },
   trayMarbles: {
     display: "flex",
-    gap: "10px",
-    marginBottom: "15px"
+    gap: "clamp(8px, 1vw, 10px)",
+    marginBottom: "clamp(12px, 1.5vh, 15px)"
   },
   miniMarble: {
-    width: "30px",
-    height: "30px",
+    width: "clamp(24px, 3vw, 30px)",
+    height: "clamp(24px, 3vh, 30px)",
     borderRadius: "50%",
     boxShadow: "0 3px 12px rgba(0,0,0,0.8), inset -5px -5px 12px rgba(0,0,0,0.5)"
   },
   trayLabel: {
-    fontSize: "1rem",
+    fontSize: "clamp(0.8rem, 1.2vw, 1rem)",
     color: "#666",
     fontWeight: "bold",
     textShadow: "0 1px 8px rgba(0,0,0,0.8)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   deckOpenView: {
     position: "fixed",
@@ -954,20 +968,20 @@ const styles = {
   },
   closeMarbleBtn: {
     position: "fixed",
-    top: "30px",
-    right: "30px",
+    top: "clamp(20px, 3vh, 30px)",
+    right: "clamp(20px, 3vw, 30px)",
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
     border: "3px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "15px 30px",
-    fontSize: "1.1rem",
+    padding: "clamp(12px, 1.5vh, 15px) clamp(24px, 3vw, 30px)",
+    fontSize: "clamp(0.9rem, 1.3vw, 1.1rem)",
     cursor: "pointer",
     borderRadius: "10px",
     fontWeight: "bold",
     boxShadow: "0 5px 25px rgba(0,0,0,0.9)",
     zIndex: 1000,
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   deckOpenBg: {
     position: "absolute",
@@ -977,8 +991,8 @@ const styles = {
   },
   marble: {
     position: "absolute",
-    width: "50px",
-    height: "50px",
+    width: "clamp(40px, 5vw, 50px)",
+    height: "clamp(40px, 5vh, 50px)",
     borderRadius: "50%",
     boxShadow: "0 8px 30px rgba(0,0,0,0.8), inset -10px -10px 25px rgba(0,0,0,0.6)",
     transition: "transform 0.2s ease",
@@ -986,20 +1000,20 @@ const styles = {
   },
   marbleShine: {
     position: "absolute",
-    width: "20px",
-    height: "20px",
-    top: "8px",
-    left: "12px",
+    width: "clamp(16px, 2vw, 20px)",
+    height: "clamp(16px, 2vh, 20px)",
+    top: "clamp(6px, 0.8vh, 8px)",
+    left: "clamp(10px, 1.2vw, 12px)",
     background: "radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%)",
     borderRadius: "50%",
     filter: "blur(3px)"
   },
   marbleReflection: {
     position: "absolute",
-    width: "15px",
-    height: "15px",
-    bottom: "10px",
-    right: "10px",
+    width: "clamp(12px, 1.5vw, 15px)",
+    height: "clamp(12px, 1.5vh, 15px)",
+    bottom: "clamp(8px, 1vh, 10px)",
+    right: "clamp(8px, 1vw, 10px)",
     background: "radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)",
     borderRadius: "50%",
     filter: "blur(2px)"
@@ -1015,12 +1029,12 @@ const styles = {
   },
   jumpscareBox: {
     textAlign: "center",
-    maxWidth: "600px",
-    padding: "40px"
+    maxWidth: "clamp(450px, 60vw, 600px)",
+    padding: "clamp(30px, 4vw, 40px)"
   },
   ghostFace: {
-    fontSize: "8rem",
-    marginBottom: "30px",
+    fontSize: "clamp(6rem, 10vw, 8rem)",
+    marginBottom: "clamp(20px, 3vh, 30px)",
     animation: "shake 0.5s ease-in-out infinite",
     filter: "drop-shadow(0 0 40px rgba(155, 89, 182, 0.9))"
   },
@@ -1028,44 +1042,45 @@ const styles = {
     background: "rgba(10, 10, 10, 0.95)",
     border: "4px solid rgba(139,0,0,0.6)",
     borderRadius: "20px",
-    padding: "30px",
-    marginBottom: "20px",
+    padding: "clamp(24px, 3vw, 30px)",
+    marginBottom: "clamp(16px, 2vh, 20px)",
     boxShadow: "0 0 50px rgba(139,0,0,0.5)"
   },
   speechText: {
-    fontSize: "1.3rem",
+    fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
     color: "#999",
-    marginBottom: "15px",
-    lineHeight: "1.8"
+    marginBottom: "clamp(12px, 1.5vh, 15px)",
+    lineHeight: "clamp(1.6, 1.8vh, 1.8)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   clickToContinue: {
-    fontSize: "0.9rem",
+    fontSize: "clamp(0.75rem, 1.1vw, 0.9rem)",
     color: "#555",
     fontStyle: "italic",
     animation: "blink 1.5s ease-in-out infinite",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   controls: {
     position: "absolute",
-    bottom: "30px",
+    bottom: "clamp(20px, 3vh, 30px)",
     left: "50%",
     transform: "translateX(-50%)",
     textAlign: "center",
     zIndex: 300,
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "clamp(8px, 1vh, 10px)",
     alignItems: "center"
   },
   hintBox: {
     background: "rgba(10, 10, 10, 0.92)",
     border: "2px solid rgba(139,0,0,0.6)",
-    padding: "15px 30px",
+    padding: "clamp(12px, 1.5vh, 15px) clamp(24px, 3vw, 30px)",
     borderRadius: "10px",
     color: "#999",
-    fontSize: "1rem",
+    fontSize: "clamp(0.85rem, 1.2vw, 1rem)",
     boxShadow: "0 5px 25px rgba(139,0,0,0.4)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   lockModal: {
     position: "fixed",
@@ -1081,157 +1096,164 @@ const styles = {
   lockPanel: {
     background: "linear-gradient(135deg, #0a0a0a 0%, #000 50%, #0a0a0a 100%)",
     border: "4px solid rgba(139,0,0,0.6)",
-    borderRadius: "20px",
-    padding: "40px",
+    borderRadius: "clamp(16px, 2vw, 20px)",
+    padding: "clamp(30px, 4vw, 40px)",
     textAlign: "center",
     color: "#666",
     boxShadow: "0 25px 100px rgba(0,0,0,0.98)",
-    minWidth: "400px"
+    minWidth: "clamp(320px, 40vw, 400px)"
   },
   lockPanelTitle: {
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
     fontWeight: "bold",
-    marginBottom: "15px",
+    marginBottom: "clamp(12px, 1.5vh, 15px)",
     textShadow: "0 0 25px rgba(139,0,0,0.8)",
-    color: "#8B0000"
+    color: "#8B0000",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   lockInstructions: {
-    fontSize: "0.9rem",
+    fontSize: "clamp(0.75rem, 1.1vw, 0.9rem)",
     color: "#555",
-    marginBottom: "25px",
-    fontFamily: "Arial, sans-serif"
+    marginBottom: "clamp(20px, 2.5vh, 25px)",
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   codeDisplay: {
     display: "flex",
     justifyContent: "center",
-    gap: "15px",
-    marginBottom: "25px"
+    gap: "clamp(12px, 1.5vw, 15px)",
+    marginBottom: "clamp(20px, 2.5vh, 25px)"
   },
   digitWrapper: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "8px"
+    gap: "clamp(6px, 0.8vh, 8px)"
   },
   arrowBtn: {
     background: "linear-gradient(135deg, rgba(20,20,20,0.9), rgba(10,10,10,0.95))",
     border: "2px solid rgba(139,0,0,0.5)",
     color: "#666",
-    width: "40px",
-    height: "28px",
+    width: "clamp(32px, 4vw, 40px)",
+    height: "clamp(22px, 2.8vh, 28px)",
     cursor: "pointer",
-    fontSize: "0.8rem",
+    fontSize: "clamp(0.65rem, 1vw, 0.8rem)",
     borderRadius: "5px",
     fontWeight: "bold",
     transition: "all 0.2s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   digit: {
-    width: "50px",
-    height: "60px",
+    width: "clamp(40px, 5vw, 50px)",
+    height: "clamp(48px, 6vh, 60px)",
     background: "linear-gradient(135deg, #0a0a0a 0%, #000 40%, #050505 70%, #000 100%)",
     border: "3px solid rgba(139,0,0,0.6)",
     borderRadius: "8px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "2.2rem",
+    fontSize: "clamp(1.8rem, 2.8vw, 2.2rem)",
     color: "#8B0000",
     fontWeight: "bold",
     boxShadow: "inset 0 3px 15px rgba(0,0,0,0.99)",
     textShadow: "0 0 20px rgba(139,0,0,0.8)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   unlockBtn: {
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(100,0,0,0.9))",
     border: "3px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "15px 40px",
-    fontSize: "1.2rem",
+    padding: "clamp(12px, 1.5vh, 15px) clamp(32px, 4vw, 40px)",
+    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
     cursor: "pointer",
     borderRadius: "10px",
     fontWeight: "bold",
-    marginBottom: "12px",
+    marginBottom: "clamp(10px, 1.2vh, 12px)",
     width: "100%",
     boxShadow: "0 5px 25px rgba(139,0,0,0.6)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   cancelBtn: {
     background: "transparent",
     border: "2px solid rgba(80,80,80,0.5)",
     color: "#555",
-    padding: "10px 30px",
-    fontSize: "0.95rem",
+    padding: "clamp(8px, 1vh, 10px) clamp(24px, 3vw, 30px)",
+    fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)",
     cursor: "pointer",
     borderRadius: "8px",
     width: "100%",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   winBox: {
     textAlign: "center",
     position: "relative"
   },
   winTitle: {
-    fontSize: "4rem",
+    fontSize: "clamp(3rem, 5vw, 4rem)",
     color: "#8B0000",
     textShadow: "0 0 60px rgba(139,0,0,0.9)",
-    marginBottom: "30px",
-    animation: "bounce 1s ease infinite"
+    marginBottom: "clamp(20px, 3vh, 30px)",
+    animation: "bounce 1s ease infinite",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   winText: {
-    fontSize: "1.6rem",
-    marginBottom: "18px",
-    color: "#999"
+    fontSize: "clamp(1.2rem, 2vw, 1.6rem)",
+    marginBottom: "clamp(14px, 1.8vh, 18px)",
+    color: "#999",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   correctAnswer: {
     color: "#8B0000",
-    fontSize: "2.2rem",
+    fontSize: "clamp(1.8rem, 2.8vw, 2.2rem)",
     fontWeight: "bold",
     textShadow: "0 0 40px rgba(139,0,0,0.9)"
   },
   winSubtext: {
-    fontSize: "1.2rem",
+    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
     color: "#666",
-    marginTop: "15px",
-    marginBottom: "15px"
+    marginTop: "clamp(12px, 1.5vh, 15px)",
+    marginBottom: "clamp(12px, 1.5vh, 15px)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   sparkles: {
-    fontSize: "2.5rem",
-    marginTop: "25px",
-    marginBottom: "35px",
+    fontSize: "clamp(2rem, 3vw, 2.5rem)",
+    marginTop: "clamp(20px, 2.5vh, 25px)",
+    marginBottom: "clamp(28px, 3.5vh, 35px)",
     animation: "twinkle 1s ease-in-out infinite"
   },
   loseBox: {
     textAlign: "center"
   },
   loseTitle: {
-    fontSize: "4rem",
+    fontSize: "clamp(3rem, 5vw, 4rem)",
     color: "#8B0000",
     textShadow: "0 0 60px rgba(139,0,0,0.9)",
-    marginBottom: "30px"
+    marginBottom: "clamp(20px, 3vh, 30px)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   loseText: {
-    fontSize: "1.5rem",
-    marginBottom: "20px",
-    color: "#999"
+    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
+    marginBottom: "clamp(16px, 2vh, 20px)",
+    color: "#999",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   loseSubtext: {
-    fontSize: "1.2rem",
+    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
     color: "#666",
-    marginBottom: "40px"
+    marginBottom: "clamp(32px, 4vh, 40px)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   retryBtn: {
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
     border: "3px solid rgba(139,0,0,0.8)",
     color: "#fff",
-    padding: "18px 50px",
-    fontSize: "1.3rem",
+    padding: "clamp(14px, 1.8vh, 18px) clamp(40px, 5vw, 50px)",
+    fontSize: "clamp(1.05rem, 1.6vw, 1.3rem)",
     cursor: "pointer",
     borderRadius: "12px",
     fontWeight: "bold",
-    letterSpacing: "2px",
+    letterSpacing: "clamp(1.5px, 0.2vw, 2px)",
     boxShadow: "0 10px 35px rgba(139,0,0,0.7)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   }
 };
 
@@ -1301,9 +1323,13 @@ styleSheet.textContent = `
     50% { transform: translateY(10px); }
   }
   
-  [data-pos="fl"] { left: 120px; top: 100%; }
-  [data-pos="fr"] { right: 120px; top: 100%; }
-  [data-pos="bl"] { left: 140px; top: 92%; opacity: 0.4; filter: blur(3px); }
-  [data-pos="br"] { right: 140px; top: 92%; opacity: 0.4; filter: blur(3px); }
+  [data-pos="fl"] { left: clamp(96px, 12vw, 120px); top: 100%; }
+  [data-pos="fr"] { right: clamp(96px, 12vw, 120px); top: 100%; }
+  [data-pos="bl"] { left: clamp(112px, 14vw, 140px); top: 92%; opacity: 0.4; filter: blur(3px); }
+  [data-pos="br"] { right: clamp(112px, 14vw, 140px); top: 92%; opacity: 0.4; filter: blur(3px); }
+  
+  button:hover {
+    transform: scale(1.05);
+  }
 `;
 document.head.appendChild(styleSheet);

@@ -75,7 +75,7 @@ Người đó đã ghi chú:
 
 - Thứ Hai: Nước ép VỊ CAM
 - Thứ Ba: Nước ép VỊ DỨA CHANH DÂY 
-- Thứ Tư: Nước ép TÁO XANH
+- Thứ Tư: Nước ép VỊ TÁO XANH
 - Thứ Năm: Nước ép VỊ NHO
 `;
 
@@ -361,7 +361,7 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"

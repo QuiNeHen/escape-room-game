@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 
+// Load Google Fonts hỗ trợ tiếng Việt
+const loadFonts = () => {
+  if (!document.querySelector('#room1-fonts')) {
+    const link = document.createElement('link');
+    link.id = 'room1-fonts';
+    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+};
+
 export default function Room1({ onComplete }) {
   const [deckOpen, setDeckOpen] = useState(false);
   const [notePickedUp, setNotePickedUp] = useState(false);
@@ -41,7 +52,7 @@ Tôi tìm được bằng chứng cho thấy chủ nhân căn phòng này đã �
 
 Trên bàn có 16 lá bài kỳ lạ.
 Mỗi lá đều có:
-- 1 con ký tự (số hoặc chữ)
+- 1 ký tự (số hoặc chữ)
 - 1 dãy 4 số MẬT KHẨU dán bên dưới
 - 1 chất bài (♣ ♥ ♠ ♦)
 
@@ -51,8 +62,8 @@ Không ai xem mật khẩu ẩn.
 Đoạn hội thoại:
 
 A: "Tôi không biết là lá bài nào."
-B: "Tôi biết chắc cậu không thể biết. Nhưng tôi cũng không biết."
-A: "Nếu vậy... giờ tôi biết rồi."
+B: "Tôi biết chắc là cậu không thể biết. Nhưng tôi cũng không biết."
+A: "Nếu vậy... thì giờ tôi biết rồi."
 B: "Vậy thì tôi cũng biết rồi."
 
 MẬT KHẨU = 4 SỐ DƯỚI LÁ BÀI ĐÓ.
@@ -60,11 +71,17 @@ MẬT KHẨU = 4 SỐ DƯỚI LÁ BÀI ĐÓ.
 HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
 
   useEffect(() => {
+    loadFonts();
+    
+    // Prevent scrollbars
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
     if (deckOpen) {
       const positions = {};
       cards.forEach((card, i) => {
         const angle = (i / cards.length) * Math.PI * 2;
-        const radius = 300;
+        const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
         positions[card.id] = {
           x: Math.cos(angle) * radius,
           y: Math.sin(angle) * radius,
@@ -73,6 +90,11 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
       });
       setCardPositions(positions);
     }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [deckOpen]);
 
   useEffect(() => {
@@ -171,17 +193,14 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
         <div style={styles.vignette}></div>
         <div style={styles.crackOverlay}></div>
         
-        {/* Blood stains */}
-        <div style={{...styles.bloodStain, top: "15%", left: "20%", width: "80px", height: "80px"}}></div>
-        <div style={{...styles.bloodStain, top: "60%", right: "15%", width: "120px", height: "60px", opacity: 0.3}}></div>
+        <div style={{...styles.bloodStain, top: "15%", left: "20%", width: "clamp(60px, 8vw, 80px)", height: "clamp(60px, 8vw, 80px)"}}></div>
+        <div style={{...styles.bloodStain, top: "60%", right: "15%", width: "clamp(90px, 12vw, 120px)", height: "clamp(45px, 6vw, 60px)", opacity: 0.3}}></div>
 
         {!deckOpen && (
           <>
-            {/* Chains decoration */}
             <div style={{...styles.chains, top: "8%", left: "12%", animationDelay: "0s"}}>⛓️</div>
             <div style={{...styles.chains, top: "12%", right: "10%", animationDelay: "1s"}}>⛓️</div>
 
-            {/* ĐÈN TRẦN - với hiệu ứng nhấp nháy */}
             <div style={styles.ceilingLamp}>
               <div style={styles.lampCord}></div>
               <div style={styles.lampShade}>
@@ -191,7 +210,6 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               </div>
             </div>
 
-            {/* GƯƠNG */}
             <div style={styles.mirror3D}>
               <div style={styles.mirrorFrame}></div>
               <div style={styles.mirrorGlass}>
@@ -200,7 +218,6 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               </div>
             </div>
 
-            {/* TỦ SÁCH */}
             <div style={styles.bookshelf3D}>
               <div style={styles.shelfBack}></div>
               <div style={styles.shelfSide}></div>
@@ -213,18 +230,15 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               <div style={styles.cobweb}>🕸️</div>
             </div>
 
-            {/* BÌNH HOA */}
             <div style={styles.vase3D}>
               <div style={styles.vaseBody}></div>
               <div style={styles.vaseNeck}></div>
               <div style={styles.vaseShadow}></div>
             </div>
 
-            {/* VẾT NỨT */}
             <div style={styles.wallCrack}></div>
             <div style={{...styles.wallCrack, top: "35%", left: "60%", transform: "rotate(-45deg)"}}></div>
 
-            {/* CỬA */}
             <div
               style={{
                 ...styles.doorWrapper,
@@ -261,7 +275,6 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               </div>
             </div>
 
-            {/* BÀN */}
             <div style={styles.tableWrapper3D}>
               <div style={styles.tableShadow3D}></div>
               <div style={styles.table3D}>
@@ -278,7 +291,6 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               <div style={styles.tableLeg} data-pos="br"></div>
             </div>
 
-            {/* KHAY BÀI */}
             <div
               style={{
                 ...styles.cardDeck3D,
@@ -296,22 +308,20 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               <div style={styles.deckBody3D}>
                 <div style={styles.deckTop3D}>🂠</div>
                 <div style={styles.deckSide}></div>
-                {/* <div style={styles.deckLabel}>MỞ BÀI</div> */}
               </div>
             </div>
           </>
         )}
 
-        {/* KHAY BÀI MỞ */}
         {deckOpen && (
           <div style={styles.deckOpenView}>
             <div style={styles.deckOpenBg}></div>
-            <div style={{position: "absolute", top: 20, left: 20, zIndex: 999}}>
+            <div style={{position: "absolute", top: "clamp(10px, 2vh, 20px)", left: "clamp(10px, 2vw, 20px)", zIndex: 999}}>
               <button style={styles.closeDeckBtn} onClick={() => setDeckOpen(false)}>
                 ← Đóng khay bài
               </button>
-              <div style={{fontSize: "0.9rem", marginTop: 8, color: "#666", opacity: 0.8, fontFamily: "Arial, sans-serif"}}>
-                Kéo thả • Double-click = loại/bỏ loại
+              <div style={{fontSize: "clamp(0.7rem, 1.5vw, 0.9rem)", marginTop: "clamp(4px, 1vh, 8px)", color: "#666", opacity: 0.8, fontFamily: "'Noto Sans', Arial, sans-serif"}}>
+                Kéo thả • Double-click = ẩn/hiện lá bài.
               </div>
             </div>
 
@@ -356,7 +366,6 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
           </div>
         )}
 
-        {/* GHI CHÚ */}
         {!deckOpen && !notePickedUp && (
           <div
             style={{
@@ -382,10 +391,10 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
               <div
                 style={{
                   position: "absolute",
-                  bottom: "30px",
-                  right: "30px",
-                  width: "80px",
-                  height: "100px",
+                  bottom: "clamp(20px, 4vh, 30px)",
+                  right: "clamp(20px, 4vw, 30px)",
+                  width: "clamp(60px, 8vw, 80px)",
+                  height: "clamp(75px, 10vh, 100px)",
                   background: "rgba(40,35,30,0.95)",
                   border: "4px solid rgba(139,0,0,0.6)",
                   borderRadius: "8px",
@@ -394,7 +403,7 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "2.5rem",
+                  fontSize: "clamp(2rem, 3vw, 2.5rem)",
                   zIndex: 200
                 }}
                 onClick={() => setNoteOpen(true)}
@@ -409,17 +418,14 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
                   ...styles.notePanel3D,
                   left: `calc(50% + ${notePos.x}px)`,
                   top: `calc(50% + ${notePos.y}px)`,
-                  cursor: noteDragging ? "grabbing" : "grab",
-                  width: "700px",
-                  padding: "50px",
-                  fontSize: "1.3rem"
+                  cursor: noteDragging ? "grabbing" : "grab"
                 }}
                 onMouseDown={() => setNoteDragging(true)}
                 onTouchStart={() => setNoteDragging(true)}
               >
                 <button style={styles.closeNote} onClick={(e) => {e.stopPropagation(); setNoteOpen(false);}}>✕</button>
-                <div style={{...styles.noteTitle, fontSize: "2.2rem"}}>📋 GHI CHÚ ĐIỀU TRA</div>
-                <pre style={{...styles.noteContent, fontSize: "1.3rem", lineHeight: "2"}}>{noteContent}</pre>
+                <div style={styles.noteTitle}>📋 GHI CHÚ ĐIỀU TRA</div>
+                <pre style={styles.noteContent}>{noteContent}</pre>
               </div>
             )}
           </>
@@ -454,10 +460,14 @@ const styles = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    fontFamily: "Georgia, serif",
+    fontFamily: "'Noto Serif', Georgia, serif",
     position: "relative",
     userSelect: "none",
     background: "#000"
+  },
+  roomContainer: {
+    position: "absolute",
+    inset: 0
   },
   roomBg: {
     position: "absolute",
@@ -502,7 +512,7 @@ const styles = {
   },
   chains: {
     position: "absolute",
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
     color: "#333",
     opacity: 0.3,
     textShadow: "0 2px 8px rgba(0,0,0,0.9)",
@@ -515,27 +525,32 @@ const styles = {
     top: "3%", 
     right: "15%", 
     zIndex: 9,
-    filter: "drop-shadow(0 0 30px rgba(139,0,0,0.3))"
+    filter: "drop-shadow(0 0 30px rgba(139,0,0,0.3))",
+    transform: "scale(clamp(0.7, 1vw, 1))"
   },
   lampCord: { 
     width: "2px", 
-    height: "80px", 
+    height: "clamp(60px, 8vh, 80px)", 
     background: "linear-gradient(180deg, #222, #000)", 
     margin: "0 auto", 
     boxShadow: "0 0 8px rgba(0,0,0,0.9)" 
   },
-  lampShade: { position: "relative", width: "100px", height: "80px" },
+  lampShade: { 
+    position: "relative", 
+    width: "clamp(80px, 10vw, 100px)", 
+    height: "clamp(64px, 8vh, 80px)" 
+  },
   lampTop: { 
-    width: "40px", 
-    height: "10px", 
+    width: "clamp(32px, 4vw, 40px)", 
+    height: "clamp(8px, 1vh, 10px)", 
     background: "linear-gradient(135deg, #2a2520, #1a1510)", 
     borderRadius: "50%", 
     margin: "0 auto", 
     boxShadow: "0 5px 20px rgba(0,0,0,0.8), inset 0 -3px 10px rgba(0,0,0,0.5)" 
   },
   lampBottom: { 
-    width: "100px", 
-    height: "70px", 
+    width: "clamp(80px, 10vw, 100px)", 
+    height: "clamp(56px, 7vh, 70px)", 
     background: "linear-gradient(135deg, #3a3025 0%, #2a2520 50%, #1a1510 100%)", 
     clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)", 
     boxShadow: "0 15px 50px rgba(0,0,0,0.9), inset 0 -15px 40px rgba(0,0,0,0.6)" 
@@ -545,8 +560,8 @@ const styles = {
     bottom: "-40px", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    width: "180px", 
-    height: "180px", 
+    width: "clamp(144px, 18vw, 180px)", 
+    height: "clamp(144px, 18vh, 180px)", 
     background: "radial-gradient(circle, rgba(139,0,0,0.2), transparent 70%)", 
     animation: "lightFlicker 4s ease-in-out infinite", 
     pointerEvents: "none" 
@@ -556,14 +571,14 @@ const styles = {
     position: "absolute", 
     top: "12%", 
     left: "8%", 
-    width: "140px", 
-    height: "200px", 
-    transform: "perspective(1200px) rotateY(-20deg)", 
+    width: "clamp(112px, 14vw, 140px)", 
+    height: "clamp(160px, 20vh, 200px)", 
+    transform: "perspective(1200px) rotateY(-20deg) scale(clamp(0.8, 1vw, 1))", 
     zIndex: 8 
   },
   mirrorFrame: { 
     position: "absolute", 
-    inset: "-15px", 
+    inset: "clamp(-12px, -1.5vw, -15px)", 
     background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 50%, #050302 100%)", 
     borderRadius: "15px", 
     boxShadow: "0 20px 70px rgba(0,0,0,0.95), inset 0 5px 25px rgba(0,0,0,0.9)", 
@@ -598,9 +613,9 @@ const styles = {
     position: "absolute", 
     bottom: "8%", 
     right: "6%", 
-    width: "220px", 
-    height: "450px", 
-    transform: "perspective(1500px) rotateY(18deg)", 
+    width: "clamp(176px, 22vw, 220px)", 
+    height: "clamp(360px, 45vh, 450px)", 
+    transform: "perspective(1500px) rotateY(18deg) scale(clamp(0.8, 1vw, 1))", 
     zIndex: 4 
   },
   shelfBack: { 
@@ -612,9 +627,9 @@ const styles = {
   },
   shelfSide: { 
     position: "absolute", 
-    right: "-25px", 
+    right: "clamp(-20px, -2.5vw, -25px)", 
     top: "0", 
-    width: "25px", 
+    width: "clamp(20px, 2.5vw, 25px)", 
     height: "100%", 
     background: "linear-gradient(to right, #0f0a08, #000)", 
     borderRadius: "0 8px 8px 0", 
@@ -622,9 +637,9 @@ const styles = {
   },
   shelf1: { 
     position: "absolute", 
-    width: "calc(100% - 30px)", 
-    height: "12px", 
-    left: "15px", 
+    width: "calc(100% - clamp(24px, 3vw, 30px))", 
+    height: "clamp(10px, 1.2vh, 12px)", 
+    left: "clamp(12px, 1.5vw, 15px)", 
     top: "25%", 
     background: "linear-gradient(to bottom, #2a2520, #1a1510)", 
     borderRadius: "4px", 
@@ -632,9 +647,9 @@ const styles = {
   },
   shelf2: { 
     position: "absolute", 
-    width: "calc(100% - 30px)", 
-    height: "12px", 
-    left: "15px", 
+    width: "calc(100% - clamp(24px, 3vw, 30px))", 
+    height: "clamp(10px, 1.2vh, 12px)", 
+    left: "clamp(12px, 1.5vw, 15px)", 
     top: "50%", 
     background: "linear-gradient(to bottom, #2a2520, #1a1510)", 
     borderRadius: "4px", 
@@ -642,9 +657,9 @@ const styles = {
   },
   shelf3: { 
     position: "absolute", 
-    width: "calc(100% - 30px)", 
-    height: "12px", 
-    left: "15px", 
+    width: "calc(100% - clamp(24px, 3vw, 30px))", 
+    height: "clamp(10px, 1.2vh, 12px)", 
+    left: "clamp(12px, 1.5vw, 15px)", 
     top: "75%", 
     background: "linear-gradient(to bottom, #2a2520, #1a1510)", 
     borderRadius: "4px", 
@@ -652,8 +667,8 @@ const styles = {
   },
   book: { 
     position: "absolute", 
-    width: "25px", 
-    height: "80px", 
+    width: "clamp(20px, 2.5vw, 25px)", 
+    height: "clamp(64px, 8vh, 80px)", 
     background: "linear-gradient(135deg, #2a1810, #1a1008, #0a0504)", 
     border: "1px solid #000", 
     borderRadius: "2px", 
@@ -663,7 +678,7 @@ const styles = {
     position: "absolute",
     top: "-10px",
     right: "-10px",
-    fontSize: "2rem",
+    fontSize: "clamp(1.6rem, 2vw, 2rem)",
     opacity: 0.4,
     filter: "grayscale(1)",
     animation: "swing 4s ease-in-out infinite"
@@ -673,8 +688,9 @@ const styles = {
     position: "absolute", 
     bottom: "12%", 
     left: "10%", 
-    width: "90px", 
-    height: "160px", 
+    width: "clamp(72px, 9vw, 90px)", 
+    height: "clamp(128px, 16vh, 160px)",
+    transform: "scale(clamp(0.8, 1vw, 1))",
     zIndex: 4 
   },
   vaseBody: { 
@@ -682,8 +698,8 @@ const styles = {
     bottom: "0", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    width: "90px", 
-    height: "140px", 
+    width: "clamp(72px, 9vw, 90px)", 
+    height: "clamp(112px, 14vh, 140px)", 
     background: "linear-gradient(135deg, #1a1a20 0%, #0f0f18 40%, #050508 100%)", 
     borderRadius: "45px 45px 20px 20px", 
     boxShadow: "0 20px 60px rgba(0,0,0,0.95), inset -15px 0 40px rgba(0,0,0,0.7), inset 15px 0 40px rgba(255,255,255,0.05)" 
@@ -693,19 +709,19 @@ const styles = {
     top: "0", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    width: "40px", 
-    height: "35px", 
+    width: "clamp(32px, 4vw, 40px)", 
+    height: "clamp(28px, 3.5vh, 35px)", 
     background: "linear-gradient(to bottom, #0f0f18, #050508)", 
     borderRadius: "20px 20px 0 0", 
     boxShadow: "0 -5px 20px rgba(0,0,0,0.8), inset 0 -10px 25px rgba(0,0,0,0.6)" 
   },
   vaseShadow: { 
     position: "absolute", 
-    bottom: "-15px", 
+    bottom: "clamp(-12px, -1.5vh, -15px)", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    width: "110px", 
-    height: "30px", 
+    width: "clamp(88px, 11vw, 110px)", 
+    height: "clamp(24px, 3vh, 30px)", 
     background: "radial-gradient(ellipse, rgba(0,0,0,0.9), transparent)", 
     filter: "blur(12px)" 
   },
@@ -714,8 +730,8 @@ const styles = {
     position: "absolute", 
     top: "18%", 
     left: "22%", 
-    width: "280px", 
-    height: "4px", 
+    width: "clamp(224px, 28vw, 280px)", 
+    height: "clamp(3px, 0.4vh, 4px)", 
     background: "linear-gradient(90deg, transparent, #000 20%, #0a0a0a 50%, #000 80%, transparent)", 
     transform: "rotate(28deg)", 
     boxShadow: "0 0 20px rgba(0,0,0,0.95), inset 0 1px 4px rgba(0,0,0,0.9)", 
@@ -727,16 +743,16 @@ const styles = {
     position: "absolute", 
     top: "6%", 
     left: "50%", 
-    transform: "translateX(-50%) perspective(2000px)", 
+    transform: "translateX(-50%) perspective(2000px) scale(clamp(0.7, 1vw, 1))", 
     zIndex: 10, 
     cursor: "pointer" 
   },
   doorFrame: { 
     position: "absolute", 
-    width: "260px", 
-    height: "400px", 
-    top: "-25px", 
-    left: "-30px", 
+    width: "clamp(208px, 26vw, 260px)", 
+    height: "clamp(320px, 40vh, 400px)", 
+    top: "clamp(-20px, -2.5vh, -25px)", 
+    left: "clamp(-24px, -3vw, -30px)", 
     zIndex: -1 
   },
   doorFrameTop: { 
@@ -744,7 +760,7 @@ const styles = {
     left: "0", 
     top: "0", 
     width: "100%", 
-    height: "25px", 
+    height: "clamp(20px, 2.5vh, 25px)", 
     background: "linear-gradient(to bottom, #000 0%, #0a0a0a 60%, #1a1510 100%)", 
     borderRadius: "15px 15px 0 0", 
     boxShadow: "0 8px 30px rgba(0,0,0,0.95), inset 0 -5px 20px rgba(0,0,0,0.9)" 
@@ -753,7 +769,7 @@ const styles = {
     position: "absolute", 
     left: "0", 
     top: "0", 
-    width: "25px", 
+    width: "clamp(20px, 2.5vw, 25px)", 
     height: "100%", 
     background: "linear-gradient(to right, #000 0%, #0a0a0a 60%, #1a1510 100%)", 
     borderRadius: "15px 0 0 8px", 
@@ -763,13 +779,17 @@ const styles = {
     position: "absolute", 
     right: "0", 
     top: "0", 
-    width: "25px", 
+    width: "clamp(20px, 2.5vw, 25px)", 
     height: "100%", 
     background: "linear-gradient(to left, #000 0%, #0a0a0a 60%, #1a1510 100%)", 
     borderRadius: "0 15px 8px 0", 
     boxShadow: "inset 5px 0 20px rgba(0,0,0,0.9), -5px 0 25px rgba(0,0,0,0.8)" 
   },
-  door3D: { position: "relative", width: "220px", height: "370px" },
+  door3D: { 
+    position: "relative", 
+    width: "clamp(176px, 22vw, 220px)", 
+    height: "clamp(296px, 37vh, 370px)" 
+  },
   doorShadow: { 
     position: "absolute", 
     inset: 0, 
@@ -782,37 +802,37 @@ const styles = {
     width: "100%", 
     height: "100%", 
     background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)", 
-    border: "12px solid #1a1510", 
+    border: "clamp(10px, 1.2vw, 12px) solid #1a1510", 
     borderRadius: "18px 18px 6px 6px", 
     boxShadow: "0 30px 90px rgba(0,0,0,0.98), inset 0 6px 40px rgba(0,0,0,0.95), inset 0 -4px 25px rgba(60,50,40,0.08)", 
     transform: "rotateX(4deg)" 
   },
   doorPanelInner: { 
     position: "absolute", 
-    width: "calc(100% - 55px)", 
-    height: "calc(100% - 55px)", 
-    top: "27px", 
-    left: "27px", 
-    border: "5px solid #0f0a08", 
+    width: "calc(100% - clamp(44px, 5.5vw, 55px))", 
+    height: "calc(100% - clamp(44px, 5.5vh, 55px))", 
+    top: "clamp(22px, 2.7vh, 27px)", 
+    left: "clamp(22px, 2.7vw, 27px)", 
+    border: "clamp(4px, 0.5vw, 5px) solid #0f0a08", 
     borderRadius: "12px", 
     opacity: 0.5, 
     boxShadow: "inset 0 3px 20px rgba(0,0,0,0.9)" 
   },
   doorLine1: { 
     position: "absolute", 
-    width: "calc(100% - 35px)", 
+    width: "calc(100% - clamp(28px, 3.5vw, 35px))", 
     height: "3px", 
     top: "38%", 
-    left: "17px", 
+    left: "clamp(14px, 1.7vw, 17px)", 
     background: "linear-gradient(90deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)", 
     opacity: 0.7 
   },
   doorLine2: { 
     position: "absolute", 
     width: "3px", 
-    height: "calc(100% - 35px)", 
+    height: "calc(100% - clamp(28px, 3.5vh, 35px))", 
     left: "50%", 
-    top: "17px", 
+    top: "clamp(14px, 1.7vh, 17px)", 
     background: "linear-gradient(180deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)", 
     opacity: 0.7 
   },
@@ -820,7 +840,7 @@ const styles = {
     position: "absolute",
     bottom: "15%",
     right: "20%",
-    fontSize: "1.5rem",
+    fontSize: "clamp(1.2rem, 1.5vw, 1.5rem)",
     opacity: 0.6,
     animation: "drip 3s ease-in-out infinite"
   },
@@ -828,18 +848,18 @@ const styles = {
     position: "absolute", 
     top: "50%", 
     left: "78%", 
-    transform: "translate(-50%, -50%)", 
+    transform: "translate(-50%, -50%) scale(clamp(0.8, 1vw, 1))", 
     transition: "all 0.4s ease", 
     zIndex: 25 
   },
   lockShackle3D: { 
     position: "absolute", 
-    width: "34px", 
-    height: "38px", 
-    top: "-32px", 
+    width: "clamp(27px, 3.4vw, 34px)", 
+    height: "clamp(30px, 3.8vh, 38px)", 
+    top: "clamp(-26px, -3.2vh, -32px)", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    border: "8px solid #3a3530", 
+    border: "clamp(6px, 0.8vw, 8px) solid #3a3530", 
     borderBottom: "none", 
     borderRadius: "17px 17px 0 0", 
     background: "linear-gradient(to right, #2a2520 0%, #3a3530 50%, #2a2520 100%)", 
@@ -847,8 +867,8 @@ const styles = {
   },
   lockBody3D: { 
     position: "relative", 
-    width: "52px", 
-    height: "64px", 
+    width: "clamp(42px, 5.2vw, 52px)", 
+    height: "clamp(51px, 6.4vh, 64px)", 
     background: "linear-gradient(135deg, #3a3530 0%, #2a2520 15%, #1a1510 35%, #0f0a08 65%, #050302 100%)", 
     borderRadius: "12px", 
     border: "4px solid #000", 
@@ -858,8 +878,8 @@ const styles = {
     justifyContent: "center" 
   },
   lockKeyhole: { 
-    width: "12px", 
-    height: "28px", 
+    width: "clamp(10px, 1.2vw, 12px)", 
+    height: "clamp(22px, 2.8vh, 28px)", 
     background: "#000", 
     borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%", 
     boxShadow: "inset 0 4px 12px rgba(0,0,0,1), 0 2px 8px rgba(139,0,0,0.3)" 
@@ -869,38 +889,42 @@ const styles = {
     position: "absolute", 
     bottom: "3%", 
     left: "50%", 
-    transform: "translateX(-50%) perspective(2000px) rotateX(32deg)", 
+    transform: "translateX(-50%) perspective(2000px) rotateX(32deg) scale(clamp(0.6, 1vw, 1))", 
     zIndex: 5 
   },
   tableShadow3D: { 
     position: "absolute", 
-    width: "1000px", 
-    height: "700px", 
-    top: "40px", 
+    width: "clamp(800px, 100vw, 1000px)", 
+    height: "clamp(560px, 70vh, 700px)", 
+    top: "clamp(32px, 4vh, 40px)", 
     left: "50%", 
     transform: "translateX(-50%)", 
     background: "radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 75%)", 
     filter: "blur(30px)", 
     zIndex: -1 
   },
-  table3D: { position: "relative", width: "950px", height: "650px" },
+  table3D: { 
+    position: "relative", 
+    width: "clamp(760px, 95vw, 950px)", 
+    height: "clamp(520px, 65vh, 650px)" 
+  },
   tableTopEdge: { 
     position: "absolute", 
     width: "100%", 
     height: "100%", 
     background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)", 
-    border: "6px solid #000", 
-    borderRadius: "35px", 
+    border: "clamp(5px, 0.6vw, 6px) solid #000", 
+    borderRadius: "clamp(28px, 3.5vw, 35px)", 
     boxShadow: "0 40px 100px rgba(0,0,0,0.99), inset 0 8px 35px rgba(0,0,0,0.95), inset 0 -4px 20px rgba(60,50,40,0.1)" 
   },
   tableTop3D: { 
     position: "absolute", 
-    width: "calc(100% - 50px)", 
-    height: "calc(100% - 50px)", 
-    top: "25px", 
-    left: "25px", 
+    width: "calc(100% - clamp(40px, 5vw, 50px))", 
+    height: "calc(100% - clamp(40px, 5vh, 50px))", 
+    top: "clamp(20px, 2.5vh, 25px)", 
+    left: "clamp(20px, 2.5vw, 25px)", 
     background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 30%, #050302 50%, #0f0a08 70%, #1a1510 100%)", 
-    borderRadius: "28px", 
+    borderRadius: "clamp(22px, 2.8vw, 28px)", 
     boxShadow: "inset 0 12px 50px rgba(0,0,0,0.99), inset 0 -6px 25px rgba(60,50,40,0.05)" 
   },
   woodGrain1: { 
@@ -922,8 +946,8 @@ const styles = {
   tableFront: { 
     position: "absolute", 
     width: "100%", 
-    height: "30px", 
-    bottom: "-30px", 
+    height: "clamp(24px, 3vh, 30px)", 
+    bottom: "clamp(-24px, -3vh, -30px)", 
     left: "0", 
     background: "linear-gradient(to bottom, #0f0a08 0%, #050302 50%, #000 100%)", 
     borderRadius: "0 0 30px 30px", 
@@ -931,8 +955,8 @@ const styles = {
   },
   tableLeg: { 
     position: "absolute", 
-    width: "85px", 
-    height: "320px", 
+    width: "clamp(68px, 8.5vw, 85px)", 
+    height: "clamp(256px, 32vh, 320px)", 
     background: "linear-gradient(to bottom, #2a2520 0%, #1a1510 15%, #0f0a08 40%, #050302 70%, #000 100%)", 
     borderRadius: "14px", 
     boxShadow: "0 25px 70px rgba(0,0,0,0.98), inset 4px 0 18px rgba(0,0,0,0.8), inset -4px 0 18px rgba(60,50,40,0.08)", 
@@ -948,21 +972,21 @@ const styles = {
   },
   deckShadow3D: { 
     position: "absolute", 
-    width: "170px", 
-    height: "230px", 
+    width: "clamp(136px, 17vw, 170px)", 
+    height: "clamp(184px, 23vh, 230px)", 
     background: "rgba(0,0,0,0.9)", 
     borderRadius: "18px", 
     filter: "blur(25px)", 
-    top: "25px", 
+    top: "clamp(20px, 2.5vh, 25px)", 
     left: "50%", 
     transform: "translateX(-50%)" 
   },
   deckBody3D: { 
     position: "relative", 
-    width: "170px", 
-    height: "240px", 
+    width: "clamp(136px, 17vw, 170px)", 
+    height: "clamp(192px, 24vh, 240px)", 
     background: "linear-gradient(135deg, #0a0a0a 0%, #000 35%, #050505 70%, #000 100%)", 
-    border: "6px solid rgba(139,0,0,0.4)", 
+    border: "clamp(5px, 0.6vw, 6px) solid rgba(139,0,0,0.4)", 
     borderRadius: "18px", 
     display: "flex", 
     flexDirection: "column", 
@@ -972,28 +996,20 @@ const styles = {
     animation: "float 3.5s ease-in-out infinite" 
   },
   deckTop3D: { 
-    fontSize: "5.5rem", 
-    marginBottom: "15px", 
+    fontSize: "clamp(4.4rem, 5.5vw, 5.5rem)", 
+    marginBottom: "clamp(12px, 1.5vh, 15px)", 
     filter: "drop-shadow(0 0 25px rgba(139,0,0,0.6))", 
     animation: "flickerGlow 3s ease-in-out infinite" 
   },
   deckSide: { 
     position: "absolute", 
-    right: "-8px", 
-    top: "8px", 
-    width: "8px", 
-    height: "calc(100% - 16px)", 
+    right: "clamp(-6px, -0.8vw, -8px)", 
+    top: "clamp(6px, 0.8vh, 8px)", 
+    width: "clamp(6px, 0.8vw, 8px)", 
+    height: "calc(100% - clamp(13px, 1.6vh, 16px))", 
     background: "linear-gradient(to right, #000, #050505)", 
     borderRadius: "0 18px 18px 0", 
     boxShadow: "inset 3px 0 12px rgba(0,0,0,0.9)" 
-  },
-  deckLabel: { 
-    fontSize: "1.05rem", 
-    color: "#666", 
-    letterSpacing: "2px", 
-    textShadow: "0 2px 15px rgba(139,0,0,0.6)", 
-    fontWeight: "bold",
-    fontFamily: "Arial, sans-serif"
   },
   
   deckOpenView: { 
@@ -1011,71 +1027,74 @@ const styles = {
     background: "linear-gradient(135deg, rgba(20,20,20,0.9), rgba(10,10,10,0.95))", 
     border: "4px solid rgba(139,0,0,0.6)", 
     color: "#666", 
-    padding: "12px 30px", 
-    fontSize: "1.05rem", 
+    padding: "clamp(10px, 1.2vh, 12px) clamp(24px, 3vw, 30px)", 
+    fontSize: "clamp(0.9rem, 1.5vw, 1.05rem)", 
     cursor: "pointer", 
     borderRadius: "10px", 
     fontWeight: "bold", 
     boxShadow: "0 8px 30px rgba(0,0,0,0.9)", 
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   card3D: { 
     position: "absolute", 
-    width: "130px", 
-    height: "185px", 
+    width: "clamp(104px, 13vw, 130px)", 
+    height: "clamp(148px, 18.5vh, 185px)", 
     background: "linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #d5d5d5 100%)", 
-    border: "4px solid #1a1a1a", 
+    border: "clamp(3px, 0.4vw, 4px) solid #1a1a1a", 
     borderRadius: "14px", 
     boxShadow: "0 12px 40px rgba(0,0,0,0.9), inset 0 2px 10px rgba(255,255,255,0.5), inset 0 -2px 10px rgba(0,0,0,0.3)", 
-    padding: "12px", 
+    padding: "clamp(10px, 1.2vw, 12px)", 
     boxSizing: "border-box",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   cardBevel: { 
     position: "absolute", 
-    inset: "8px", 
+    inset: "clamp(6px, 0.8vw, 8px)", 
     border: "2px solid rgba(0,0,0,0.1)", 
     borderRadius: "10px", 
     pointerEvents: "none" 
   },
   cardCorner: { 
     position: "absolute", 
-    top: "12px", 
-    left: "12px", 
+    top: "clamp(10px, 1.2vh, 12px)", 
+    left: "clamp(10px, 1.2vw, 12px)", 
     display: "flex", 
     flexDirection: "column", 
     alignItems: "center", 
-    gap: "3px" 
+    gap: "clamp(2px, 0.3vh, 3px)" 
   },
   cardValue: { 
-    fontSize: "2rem", 
+    fontSize: "clamp(1.6rem, 2vw, 2rem)", 
     fontWeight: "bold", 
     lineHeight: "1", 
     textShadow: "0 1px 4px rgba(0,0,0,0.3)" 
   },
-  cardSuitSmall: { fontSize: "1.4rem", lineHeight: "1" },
+  cardSuitSmall: { 
+    fontSize: "clamp(1.1rem, 1.4vw, 1.4rem)", 
+    lineHeight: "1" 
+  },
   cardSuitLarge: { 
     position: "absolute", 
     top: "50%", 
     left: "50%", 
     transform: "translate(-50%, -50%)", 
-    fontSize: "5rem", 
+    fontSize: "clamp(4rem, 5vw, 5rem)", 
     opacity: 0.15, 
     fontWeight: "bold" 
   },
   cardCode: { 
     position: "absolute", 
-    bottom: "12px", 
+    bottom: "clamp(10px, 1.2vh, 12px)", 
     left: "50%", 
     transform: "translateX(-50%)", 
-    fontSize: "0.9rem", 
+    fontSize: "clamp(0.7rem, 0.9vw, 0.9rem)", 
     color: "#444", 
     fontWeight: "bold", 
-    letterSpacing: "4px", 
+    letterSpacing: "clamp(3px, 0.4vw, 4px)", 
     borderTop: "2px solid #ccc", 
-    paddingTop: "8px", 
-    width: "calc(100% - 24px)", 
+    paddingTop: "clamp(6px, 0.8vh, 8px)", 
+    width: "calc(100% - clamp(19px, 2.4vw, 24px))", 
     textAlign: "center",
     fontFamily: "monospace"
   },
@@ -1086,17 +1105,18 @@ const styles = {
     left: "18%", 
     cursor: "pointer", 
     zIndex: 15, 
-    animation: "float 3.5s ease-in-out infinite" 
+    animation: "float 3.5s ease-in-out infinite",
+    transform: "scale(clamp(0.8, 1vw, 1))"
   },
   notePaper3D: { 
-    fontSize: "4rem", 
+    fontSize: "clamp(3.2rem, 4vw, 4rem)", 
     filter: "drop-shadow(0 10px 35px rgba(139,0,0,0.8))", 
     textShadow: "0 0 25px rgba(139,0,0,0.6)" 
   },
   noteGlow3D: { 
     position: "absolute", 
-    width: "80px", 
-    height: "80px", 
+    width: "clamp(64px, 8vw, 80px)", 
+    height: "clamp(64px, 8vh, 80px)", 
     top: "50%", 
     left: "50%", 
     transform: "translate(-50%, -50%)", 
@@ -1106,12 +1126,12 @@ const styles = {
   },
   notePanel3D: { 
     position: "fixed", 
-    width: "550px", 
+    width: "clamp(450px, 60vw, 700px)", 
     maxHeight: "85vh", 
     background: "linear-gradient(135deg, #2a2520 0%, #1a1510 35%, #0f0a08 70%, #050302 100%)", 
-    border: "6px solid rgba(139,0,0,0.6)", 
+    border: "clamp(5px, 0.6vw, 6px) solid rgba(139,0,0,0.6)", 
     borderRadius: "15px", 
-    padding: "35px", 
+    padding: "clamp(35px, 5vw, 50px)", 
     boxShadow: "0 30px 100px rgba(0,0,0,0.98), inset 0 2px 0 rgba(60,50,40,0.3), inset 0 -2px 15px rgba(0,0,0,0.5)", 
     transform: "translate(-50%, -50%)", 
     overflowY: "auto", 
@@ -1119,15 +1139,15 @@ const styles = {
   },
   closeNote: { 
     position: "absolute", 
-    top: "15px", 
-    right: "15px", 
-    width: "38px", 
-    height: "38px", 
+    top: "clamp(12px, 1.5vh, 15px)", 
+    right: "clamp(12px, 1.5vw, 15px)", 
+    width: "clamp(30px, 3.8vw, 38px)", 
+    height: "clamp(30px, 3.8vh, 38px)", 
     background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))", 
     border: "3px solid #000", 
     borderRadius: "50%", 
     color: "#fff", 
-    fontSize: "1.4rem", 
+    fontSize: "clamp(1.1rem, 1.4vw, 1.4rem)", 
     cursor: "pointer", 
     display: "flex", 
     alignItems: "center", 
@@ -1135,26 +1155,26 @@ const styles = {
     boxShadow: "0 6px 20px rgba(0,0,0,0.8)", 
     transition: "all 0.3s ease", 
     zIndex: 10,
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   noteTitle: { 
-    fontSize: "1.6rem", 
+    fontSize: "clamp(1.6rem, 2.5vw, 2.2rem)", 
     fontWeight: "bold", 
     color: "#8B0000", 
-    marginBottom: "25px", 
+    marginBottom: "clamp(18px, 2.5vh, 25px)", 
     textAlign: "center", 
     borderBottom: "4px solid rgba(139,0,0,0.6)", 
-    paddingBottom: "15px", 
+    paddingBottom: "clamp(12px, 1.5vh, 15px)", 
     letterSpacing: "1px",
     textShadow: "0 0 20px rgba(139,0,0,0.8)",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   noteContent: { 
-    fontSize: "1rem", 
+    fontSize: "clamp(1rem, 1.5vw, 1.3rem)", 
     color: "#999", 
-    lineHeight: "1.85", 
+    lineHeight: "clamp(1.7, 2vh, 2)", 
     whiteSpace: "pre-wrap", 
-    fontFamily: "Georgia, serif" 
+    fontFamily: "'Noto Serif', Georgia, serif" 
   },
   
   lockModal: { 
@@ -1168,101 +1188,101 @@ const styles = {
     backdropFilter: "blur(12px)" 
   },
   lockPanel3D: { 
-    width: "600px", 
+    width: "clamp(400px, 60vw, 600px)", 
     background: "linear-gradient(135deg, #0a0a0a 0%, #000 50%, #0a0a0a 100%)", 
-    border: "8px solid rgba(139,0,0,0.6)", 
-    borderRadius: "28px", 
-    padding: "50px", 
+    border: "clamp(6px, 0.8vw, 8px) solid rgba(139,0,0,0.6)", 
+    borderRadius: "clamp(22px, 2.8vw, 28px)", 
+    padding: "clamp(35px, 5vw, 50px)", 
     textAlign: "center", 
     color: "#666", 
     boxShadow: "0 45px 120px rgba(0,0,0,0.99), inset 0 3px 35px rgba(139,0,0,0.2)",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   lockPanelTitle: { 
-    fontSize: "2.5rem", 
-    marginBottom: "30px", 
+    fontSize: "clamp(1.8rem, 3vw, 2.5rem)", 
+    marginBottom: "clamp(20px, 3vh, 30px)", 
     textShadow: "0 0 40px rgba(139,0,0,0.9)", 
     fontWeight: "bold", 
-    letterSpacing: "3px",
+    letterSpacing: "clamp(2px, 0.3vw, 3px)",
     color: "#8B0000"
   },
   lockInstructions: { 
-    fontSize: "1.1rem", 
+    fontSize: "clamp(0.9rem, 1.3vw, 1.1rem)", 
     color: "#555", 
-    marginBottom: "40px", 
+    marginBottom: "clamp(30px, 4vh, 40px)", 
     fontStyle: "italic" 
   },
   codeDisplay: { 
     display: "flex", 
     justifyContent: "center", 
-    gap: "30px", 
-    marginBottom: "50px" 
+    gap: "clamp(20px, 3vw, 30px)", 
+    marginBottom: "clamp(35px, 5vh, 50px)" 
   },
   digitWrapper: { 
     display: "flex", 
     flexDirection: "column", 
     alignItems: "center", 
-    gap: "15px" 
+    gap: "clamp(10px, 1.5vh, 15px)" 
   },
   arrowBtn: { 
-    width: "65px", 
-    height: "52px", 
+    width: "clamp(52px, 6.5vw, 65px)", 
+    height: "clamp(42px, 5.2vh, 52px)", 
     background: "linear-gradient(135deg, rgba(20,20,20,0.9), rgba(10,10,10,0.95))", 
     border: "4px solid rgba(139,0,0,0.5)", 
     color: "#666", 
-    fontSize: "1.6rem", 
+    fontSize: "clamp(1.3rem, 1.8vw, 1.6rem)", 
     borderRadius: "12px", 
     cursor: "pointer", 
     fontWeight: "bold", 
     transition: "all 0.3s ease", 
     boxShadow: "0 6px 20px rgba(0,0,0,0.8), inset 0 2px 0 rgba(139,0,0,0.15)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   digit3D: { 
-    width: "95px", 
-    height: "115px", 
+    width: "clamp(76px, 9.5vw, 95px)", 
+    height: "clamp(92px, 11.5vh, 115px)", 
     background: "linear-gradient(135deg, #0a0a0a 0%, #000 40%, #050505 70%, #000 100%)", 
-    border: "6px solid rgba(139,0,0,0.6)", 
-    borderRadius: "20px", 
+    border: "clamp(5px, 0.6vw, 6px) solid rgba(139,0,0,0.6)", 
+    borderRadius: "clamp(16px, 2vw, 20px)", 
     display: "flex", 
     alignItems: "center", 
     justifyContent: "center", 
-    fontSize: "4.2rem", 
+    fontSize: "clamp(3.2rem, 4.5vw, 4.2rem)", 
     color: "#8B0000", 
     fontWeight: "bold", 
     boxShadow: "inset 0 8px 35px rgba(0,0,0,0.99), 0 10px 40px rgba(139,0,0,0.4)", 
     textShadow: "0 0 40px rgba(139,0,0,0.95), 0 0 70px rgba(139,0,0,0.6)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   unlockBtn: { 
     width: "100%", 
     background: "linear-gradient(135deg, rgba(139,0,0,0.8) 0%, rgba(100,0,0,0.9) 35%, rgba(80,0,0,0.95) 70%, rgba(60,0,0,1) 100%)", 
-    border: "6px solid rgba(139,0,0,0.8)", 
+    border: "clamp(5px, 0.6vw, 6px) solid rgba(139,0,0,0.8)", 
     color: "#fff", 
-    padding: "24px", 
-    fontSize: "1.6rem", 
-    borderRadius: "18px", 
+    padding: "clamp(18px, 2.4vh, 24px)", 
+    fontSize: "clamp(1.2rem, 1.8vw, 1.6rem)", 
+    borderRadius: "clamp(14px, 1.8vw, 18px)", 
     cursor: "pointer", 
     fontWeight: "bold", 
-    letterSpacing: "4px", 
-    marginBottom: "22px", 
+    letterSpacing: "clamp(3px, 0.4vw, 4px)", 
+    marginBottom: "clamp(16px, 2.2vh, 22px)", 
     boxShadow: "0 15px 50px rgba(139,0,0,0.8), inset 0 3px 15px rgba(255,255,255,0.2)", 
     transition: "all 0.3s ease",
     textShadow: "0 2px 8px rgba(0,0,0,0.9)",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   cancelBtn: { 
     width: "100%", 
     background: "transparent", 
     border: "4px solid rgba(80,80,80,0.5)", 
     color: "#555", 
-    padding: "18px", 
-    fontSize: "1.15rem", 
-    borderRadius: "15px", 
+    padding: "clamp(14px, 1.8vh, 18px)", 
+    fontSize: "clamp(0.95rem, 1.3vw, 1.15rem)", 
+    borderRadius: "clamp(12px, 1.5vw, 15px)", 
     cursor: "pointer", 
     fontWeight: "bold", 
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   }
 };
 
@@ -1316,10 +1336,14 @@ animationStyles.textContent = `
     50% { transform: rotate(2deg); }
   }
   
-  [data-pos="fl"] { left: 160px; top: 100%; }
-  [data-pos="fr"] { right: 160px; top: 100%; }
-  [data-pos="bl"] { left: 180px; top: 92%; opacity: 0.45; filter: blur(3px); }
-  [data-pos="br"] { right: 180px; top: 92%; opacity: 0.45; filter: blur(3px); }
+  [data-pos="fl"] { left: clamp(128px, 16vw, 160px); top: 100%; }
+  [data-pos="fr"] { right: clamp(128px, 16vw, 160px); top: 100%; }
+  [data-pos="bl"] { left: clamp(144px, 18vw, 180px); top: 92%; opacity: 0.45; filter: blur(3px); }
+  [data-pos="br"] { right: clamp(144px, 18vw, 180px); top: 92%; opacity: 0.45; filter: blur(3px); }
+  
+  button:hover {
+    transform: scale(1.05);
+  }
   
   .arrow-btn:hover {
     transform: scale(1.12);
@@ -1340,12 +1364,12 @@ animationStyles.textContent = `
     border-color: rgba(100,100,100,0.6);
   }
   
-  .close-note:hover {
+  button[style*="closeNote"]:hover {
     transform: rotate(90deg) scale(1.1);
     background: linear-gradient(135deg, rgba(180,0,0,0.9), rgba(120,0,0,0.95));
   }
   
-  .close-deck-btn:hover {
+  button[style*="closeDeckBtn"]:hover {
     transform: translateX(-12px);
     box-shadow: 0 18px 50px rgba(139,0,0,0.7);
     background: linear-gradient(135deg, rgba(30,0,0,0.9), rgba(20,0,0,0.95));
