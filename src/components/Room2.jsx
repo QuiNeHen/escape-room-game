@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
+
+// ========== IMPORT CÁC HÌNH ẢNH TẠI ĐÂY ==========
+import Bg from "../Img/room2.png"
+import doorImage from "../Img/locks.png"
+// import lockImage from "../Img/lock2.png"
+import trayImage from "../Img/vienbi.png"
+import marbleTrayBg from "../Img/bgdeck.jpg"
+import ghostImage from "../Img/mabupbe.png"
 import laughSound from "../Audio/tieng_ma_cuoi-www_tiengdong_com.mp3";
 import voiceSound from "../Audio/mp3-output-ttsfree(dot)com.mp3";
 
-// Load Google Fonts hỗ trợ tiếng Việt
 const loadFonts = () => {
   if (!document.querySelector('#room2-fonts')) {
     const link = document.createElement('link');
@@ -29,6 +36,16 @@ export default function Room2({onWin}) {
 
   const correctCode = ["0", "7", "0", "3"];
 
+  // ========== ĐỊNH NGHĨA ĐƯỜNG DẪN HÌNH ẢNH ==========
+  const backgroundImage = Bg; // Bg - Hình nền phòng chính
+  const doorImg = doorImage; // doorImage - Hình cửa
+  const lockImg = ""; // lockImage - Hình khóa trên cửa
+  const trayImg = trayImage; // trayImage - Hình khay bi trên bàn
+  const marbleTrayBackground = marbleTrayBg; // marbleTrayBg - Nền khi mở khay bi
+  const lockModalBackground = ""; // lockModalBg - Nền modal nhập mật khẩu
+  // const laughSound = laughSound; // Audio cười
+  // const voiceSound = voiceSound; // Audio thoại
+
   const marbles = [
     ...Array(10).fill(null).map((_, i) => ({ id: `red-${i}`, color: "#8B0000", name: "Đỏ" })),
     ...Array(3).fill(null).map((_, i) => ({ id: `yellow-${i}`, color: "#8B8B00", name: "Vàng" })),
@@ -38,8 +55,6 @@ export default function Room2({onWin}) {
 
   useEffect(() => {
     loadFonts();
-    
-    // Prevent scrollbars
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
     
@@ -204,138 +219,103 @@ export default function Room2({onWin}) {
       {stage === "room" && (
         <>
           <div style={styles.roomContainer}>
-            <div style={styles.roomBg}></div>
+            {/* HÌNH NỀN PHÒNG CHÍNH */}
+            <div style={{
+              ...styles.roomBg,
+              backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none'
+            }}></div>
+            
             <div style={styles.fog}></div>
             <div style={styles.vignette}></div>
-            <div style={styles.crackOverlay}></div>
-            
-            <div style={{...styles.bloodStain, top: "25%", right: "18%", width: "clamp(80px, 10vw, 100px)", height: "clamp(56px, 7vh, 70px)"}}></div>
-            <div style={{...styles.bloodStain, bottom: "15%", left: "22%", width: "clamp(72px, 9vw, 90px)", height: "clamp(72px, 9vh, 90px)", opacity: 0.4}}></div>
 
             {!deckOpen && (
               <>
-                <div style={{...styles.chains, top: "10%", left: "8%", animationDelay: "0s"}}>⛓️</div>
-                <div style={{...styles.chains, top: "8%", right: "12%", animationDelay: "0.8s"}}>⛓️</div>
-                <div style={{...styles.chains, bottom: "20%", right: "15%", animationDelay: "1.5s"}}>⛓️</div>
-
-                <div style={styles.ceilingLamp}>
-                  <div style={styles.lampChain}></div>
-                  <div style={styles.lampShade}>
-                    <div style={styles.lampTop}></div>
-                    <div style={styles.lampBottom}></div>
-                    <div style={styles.lampGlow}></div>
-                  </div>
-                </div>
-
-                <div style={styles.oldPainting}>
-                  <div style={styles.paintingFrame}></div>
-                  <div style={styles.paintingCanvas}>
-                    <div style={styles.skullInFrame}>💀</div>
-                  </div>
-                </div>
-
-                <div style={styles.bookshelf}>
-                  <div style={styles.shelfBack}></div>
-                  <div style={styles.shelf1}></div>
-                  <div style={styles.shelf2}></div>
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} style={{...styles.book, left: `${10 + i * 18}%`, top: `${15 + (i % 2) * 30}%`}}></div>
-                  ))}
-                  <div style={styles.cobweb}>🕸️</div>
-                </div>
-
-                <div style={styles.oldClock}>
-                  <div style={styles.clockFace}>🕰️</div>
-                  <div style={styles.clockGlow}></div>
-                </div>
-
-                <div style={styles.floorRug}></div>
-              </>
-            )}
-
-            {!deckOpen && (
-              <div
-                style={{
-                  ...styles.doorWrapper,
-                  cursor: jumpscareTriggered ? 'pointer' : 'default',
-                  filter: hovered === "door" && jumpscareTriggered 
-                    ? "brightness(1.15) drop-shadow(0 0 80px rgba(139,0,0,0.8))" 
-                    : "none",
-                  transform: hovered === "door" && jumpscareTriggered
-                    ? "translateX(-50%) scale(1.02)" 
-                    : "translateX(-50%)",
-                  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
-                }}
-                onClick={() => jumpscareTriggered && setLockOpen(true)}
-                onMouseEnter={() => setHovered("door")}
-                onMouseLeave={() => setHovered(null)}
-              >
-                <div style={styles.doorFrame}>
-                  <div style={styles.doorFrameTop}></div>
-                  <div style={styles.doorFrameLeft}></div>
-                  <div style={styles.doorFrameRight}></div>
-                </div>
-                <div style={styles.door3D}>
-                  <div style={styles.doorShadow}></div>
-                  <div style={styles.doorPanel}>
-                    <div style={styles.doorLine1}></div>
-                    <div style={styles.doorLine2}></div>
-                    <div style={styles.doorBloodDrip}>🩸</div>
-                  </div>
+                {/* CÁNH CỬA VỚI KHÓA */}
+                <div
+                  style={{
+                    ...styles.doorWrapper,
+                    filter: hovered === "door" && jumpscareTriggered 
+                      ? "brightness(1.15) drop-shadow(0 0 80px rgba(139,0,0,0.8))" 
+                      : "none",
+                    transform: hovered === "door" && jumpscareTriggered
+                      ? "translate(-50%, 0) scale(1.02)" 
+                      : "translate(-50%, 0)",
+                    transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+                  }}
+                  onClick={() => jumpscareTriggered && setLockOpen(true)}
+                  onMouseEnter={() => setHovered("door")}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {/* Hình cửa */}
                   <div style={{
-                    ...styles.doorLock,
-                    opacity: jumpscareTriggered ? 1 : 0.4,
-                    animation: jumpscareTriggered ? "lockGlow 2s ease-in-out infinite" : "none"
+                    ...styles.doorImage,
+                    backgroundImage: doorImg ? `url(${doorImg})` : 'none',
+                    backgroundColor: doorImg ? 'transparent' : '#2a2520'
                   }}>
-                    <div style={styles.lockShackle}></div>
-                    <div style={styles.lockBody}>
-                      <div style={styles.lockKeyhole}></div>
-                    </div>
+                    {!doorImg && <div style={styles.placeholderText}>CỬA<br/>(Import hình)</div>}
                   </div>
-                </div>
-              </div>
-            )}
 
-            {!deckOpen && (
-              <div style={styles.tableWrapper}>
-                <div style={styles.tableShadow}></div>
-                <div style={styles.tableTop}>
-                  <div style={styles.tableEdge}></div>
-                  <div style={styles.tableSurface}>
-                    <div style={styles.marbleTray} onClick={() => setDeckOpen(true)}>
-                      <div style={styles.trayShadow}></div>
-                      <div style={{
-                        ...styles.trayBody,
-                        transform: hovered === "tray" ? "scale(1.08)" : "scale(1)",
-                        filter: hovered === "tray" ? "brightness(1.2) drop-shadow(0 0 60px rgba(139,0,0,0.7))" : "none",
-                        transition: "all 0.4s ease"
-                      }}
-                      onMouseEnter={() => setHovered("tray")}
-                      onMouseLeave={() => setHovered(null)}>
-                        <div style={styles.trayMarbles}>
-                          <div style={{...styles.miniMarble, background: "#8B0000"}}></div>
-                          <div style={{...styles.miniMarble, background: "#8B8B00"}}></div>
-                          <div style={{...styles.miniMarble, background: "#00008B"}}></div>
-                          <div style={{...styles.miniMarble, background: "#006400"}}></div>
-                        </div>
-                        <div style={styles.trayLabel}>Nhấn để xem</div>
+                  {/* Hình khóa */}
+                  {/* <div style={{
+                    ...styles.lockImage,
+                    backgroundImage: lockImg ? `url(${lockImg})` : 'none',
+                    backgroundColor: lockImg ? 'transparent' : '#3a3530',
+                    opacity: jumpscareTriggered ? 1 : 0.4,
+                    cursor: jumpscareTriggered ? 'pointer' : 'default'
+                  }}>
+                    {!lockImg && <div style={styles.lockPlaceholder}>🔒</div>}
+                  </div> */}
+                </div>
+
+                {/* BÀN VÀ KHAY BI */}
+                <div style={styles.tableWrapper}>
+                  <div style={styles.tableShadow}></div>
+                  <div style={styles.tableTop}>
+                    <div style={styles.tableEdge}></div>
+                    <div style={styles.tableSurface}>
+                      {/* KHAY BI */}
+                      <div 
+                        style={{
+                          ...styles.marbleTray,
+                          backgroundImage: trayImg ? `url(${trayImg})` : 'none',
+                          backgroundColor: trayImg ? 'transparent' : '#1a1510',
+                          filter: hovered === "tray" ? "brightness(1.3) drop-shadow(0 0 70px rgba(139,0,0,0.8))" : "none",
+                          transform: hovered === "tray" ? "scale(1.08)" : "scale(1)",
+                          transition: "all 0.4s ease"
+                        }}
+                        onClick={() => setDeckOpen(true)}
+                        onMouseEnter={() => setHovered("tray")}
+                        onMouseLeave={() => setHovered(null)}
+                      >
+                        {!trayImg && (
+                          <>
+                            <div style={styles.trayMarbles}>
+                              <div style={{...styles.miniMarble, background: "#8B0000"}}></div>
+                              <div style={{...styles.miniMarble, background: "#8B8B00"}}></div>
+                              <div style={{...styles.miniMarble, background: "#00008B"}}></div>
+                              <div style={{...styles.miniMarble, background: "#006400"}}></div>
+                            </div>
+                            <div style={styles.trayLabel}>KHAY BI<br/>(Nhấn để xem)</div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
+                  <div style={styles.tableLeg} data-pos="fl"></div>
+                  <div style={styles.tableLeg} data-pos="fr"></div>
+                  <div style={styles.tableLeg} data-pos="bl"></div>
+                  <div style={styles.tableLeg} data-pos="br"></div>
                 </div>
-                <div style={styles.tableLeg} data-pos="fl"></div>
-                <div style={styles.tableLeg} data-pos="fr"></div>
-                <div style={styles.tableLeg} data-pos="bl"></div>
-                <div style={styles.tableLeg} data-pos="br"></div>
-              </div>
+              </>
             )}
 
+            {/* MÀN HÌNH MỞ KHAY BI */}
             {deckOpen && (
-              <div style={styles.deckOpenView}>
-                <button
-                  style={styles.closeMarbleBtn}
-                  onClick={closeDeck}
-                >
+              <div style={{
+                ...styles.deckOpenView,
+                backgroundImage: marbleTrayBackground ? `url(${marbleTrayBackground})` : 'none'
+              }}>
+                <button style={styles.closeMarbleBtn} onClick={closeDeck}>
                   ✕ ĐÓNG KHAY BI
                 </button>
                 <div style={styles.deckOpenBg}></div>
@@ -361,10 +341,13 @@ export default function Room2({onWin}) {
               </div>
             )}
 
+            {/* JUMPSCARE */}
             {jumpscareShown && (
               <div style={{...styles.jumpscareOverlay, animation: "jumpscareAppear 0.5s ease-out"}} onClick={() => setJumpscareShown(false)}>
                 <div style={styles.jumpscareBox}>
-                  <div style={styles.ghostFace}>👻</div>
+                  <div style={styles.ghostFace}>
+  <img src={ghostImage} alt="Con ma" style={{ width: '100%', height: '100%' }} />
+</div>
                   <div style={styles.speechBubble}>
                     <p style={styles.speechText}>"Bạn đến rồi à..."</p>
                     <p style={styles.speechText}>
@@ -386,27 +369,29 @@ export default function Room2({onWin}) {
             </div>
           </div>
 
+          {/* MODAL NHẬP MẬT KHẨU */}
           {lockOpen && (
-            <div style={styles.lockModal} onClick={() => setLockOpen(false)}>
-              <div style={styles.lockPanel} onClick={e => e.stopPropagation()}>
-                <div style={styles.lockPanelTitle}>🔐 NHẬP MẬT KHẨU</div>
-                <div style={styles.lockInstructions}>Tìm ra mật khẩu 4 chữ số từ manh mối</div>
-                <div style={styles.codeDisplay}>
-                  {code.map((digit, i) => (
-                    <div key={i} style={styles.digitWrapper}>
-                      <button style={styles.arrowBtn} onClick={() => adjustCode(i, "up")}>▲</button>
-                      <div style={styles.digit}>{digit}</div>
-                      <button style={styles.arrowBtn} onClick={() => adjustCode(i, "down")}>▼</button>
-                    </div>
-                  ))}
-                </div>
-                <button style={styles.unlockBtn} onClick={checkCode}>🔓 MỞ KHÓA</button>
-                <button style={styles.cancelBtn} onClick={() => { setLockOpen(false); setCode(["0","0","0","0"]); }}>
-                  HỦY BỎ
-                </button>
+          <div style={{
+            ...styles.lockModal,
+            backgroundImage: lockModalBackground ? `url(${lockModalBackground})` : 'none'
+          }} onClick={() => setLockOpen(false)}>
+            <div style={styles.lockPanel3D} onClick={e => e.stopPropagation()}>
+              <div style={styles.lockPanelTitle}>NHẬP MẬT KHẨU</div>
+              {/* <div style={styles.lockInstructions}>Nhập 4 chữ số theo thứ tự</div> */}
+              <div style={styles.codeDisplay}>
+                {code.map((digit, i) => (
+                  <div key={i} style={styles.digitWrapper}>
+                    <button style={styles.arrowBtn} onClick={() => adjustCode(i, "up")}>▲</button>
+                    <div style={styles.digit3D}>{digit}</div>
+                    <button style={styles.arrowBtn} onClick={() => adjustCode(i, "down")}>▼</button>
+                  </div>
+                ))}
               </div>
+              <button style={styles.unlockBtn} onClick={checkCode}>MỞ KHÓA</button>
+              <button style={styles.cancelBtn} onClick={() => {setLockOpen(false); setCode(["0","0","0","0"]);}}>HỦY BỎ</button>
             </div>
-          )}
+          </div>
+        )}
         </>
       )}
 
@@ -462,10 +447,18 @@ const styles = {
     userSelect: "none",
     background: "#000"
   },
+  roomContainer: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    overflow: "hidden"
+  },
   roomBg: {
     position: "absolute",
     inset: 0,
     background: "linear-gradient(180deg, #000000 0%, #0a0a0a 30%, #050505 60%, #000 100%)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
     zIndex: 1
   },
   fog: {
@@ -475,6 +468,13 @@ const styles = {
     animation: "fogMove 15s ease-in-out infinite",
     pointerEvents: "none",
     zIndex: 2
+  },
+  vignette: {
+    position: "absolute",
+    inset: 0,
+    background: "radial-gradient(ellipse at center, transparent 15%, rgba(0,0,0,0.85) 100%)",
+    pointerEvents: "none",
+    zIndex: 3
   },
   screen: {
     width: "100%",
@@ -522,431 +522,145 @@ const styles = {
     fontWeight: "bold",
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
-  roomContainer: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
-    overflow: "hidden"
+  
+  // CỬA - HOÀN TOÀN CỐ ĐỊNH
+  doorWrapper: {
+    position: "fixed",
+    top: "25vh",
+    left: "58%",
+    transform: "translate(-50%, 0)",
+    width: "16vw",
+    minWidth: "180px",
+    height: "33vh",
+    minHeight: "300px",
+    zIndex: 10,
+    cursor: "pointer"
   },
-  vignette: {
+  doorImage: {
     position: "absolute",
     inset: 0,
-    background: "radial-gradient(ellipse at center, transparent 15%, rgba(0,0,0,0.85) 100%)",
-    pointerEvents: "none",
-    zIndex: 3
-  },
-  crackOverlay: {
-    position: "absolute",
-    inset: 0,
-    backgroundImage: `
-      linear-gradient(${Math.random() * 360}deg, transparent 30%, rgba(0,0,0,0.3) 31%, transparent 32%),
-      linear-gradient(${Math.random() * 360}deg, transparent 45%, rgba(0,0,0,0.2) 46%, transparent 47%)
-    `,
-    opacity: 0.5,
-    pointerEvents: "none",
-    zIndex: 4
-  },
-  bloodStain: {
-    position: "absolute",
-    background: "radial-gradient(ellipse, rgba(139,0,0,0.4) 0%, rgba(80,0,0,0.2) 40%, transparent 70%)",
-    borderRadius: "50%",
-    filter: "blur(8px)",
-    pointerEvents: "none",
-    zIndex: 5,
-    animation: "pulse 8s ease-in-out infinite"
-  },
-  chains: {
-    position: "absolute",
-    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
-    color: "#333",
-    opacity: 0.3,
-    textShadow: "0 2px 8px rgba(0,0,0,0.9)",
-    animation: "swing 3s ease-in-out infinite",
-    zIndex: 6
-  },
-  ceilingLamp: {
-    position: "absolute",
-    top: "5%",
-    left: "50%",
-    transform: "translateX(-50%) scale(clamp(0.8, 1vw, 1))",
-    zIndex: 8
-  },
-  lampChain: {
-    width: "3px",
-    height: "clamp(64px, 8vh, 80px)",
-    background: "linear-gradient(to bottom, #222, #000)",
-    margin: "0 auto",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.9)"
-  },
-  lampShade: {
-    position: "relative",
-    width: "clamp(96px, 12vw, 120px)",
-    height: "clamp(48px, 6vh, 60px)"
-  },
-  lampTop: {
-    width: "clamp(40px, 5vw, 50px)",
-    height: "clamp(10px, 1.2vh, 12px)",
-    background: "linear-gradient(135deg, #2a2520, #1a1510)",
-    borderRadius: "50%",
-    margin: "0 auto",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.8)"
-  },
-  lampBottom: {
-    width: "clamp(96px, 12vw, 120px)",
-    height: "clamp(48px, 6vh, 60px)",
-    background: "linear-gradient(135deg, #3a3025 0%, #2a2520 50%, #1a1510 100%)",
-    borderRadius: "0 0 50% 50%",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.9), inset 0 -5px 20px rgba(0,0,0,0.7)",
-    border: "3px solid #000",
-    margin: "0 auto"
-  },
-  lampGlow: {
-    width: "clamp(144px, 18vw, 180px)",
-    height: "clamp(144px, 18vh, 180px)",
-    background: "radial-gradient(circle, rgba(139,0,0,0.2), transparent 70%)",
-    position: "absolute",
-    bottom: "clamp(-40px, -5vh, -50px)",
-    left: "50%",
-    transform: "translateX(-50%)",
-    animation: "lightFlicker 4s ease-in-out infinite",
-    pointerEvents: "none"
-  },
-  oldPainting: {
-    position: "absolute",
-    top: "15%",
-    left: "10%",
-    zIndex: 6,
-    transform: "scale(clamp(0.8, 1vw, 1))"
-  },
-  paintingFrame: {
-    width: "clamp(120px, 15vw, 150px)",
-    height: "clamp(96px, 12vh, 120px)",
-    background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 100%)",
-    border: "clamp(6px, 0.8vw, 8px) solid #000",
-    boxShadow: "0 10px 35px rgba(0,0,0,0.9), inset 0 2px 8px rgba(0,0,0,0.8)",
-    borderRadius: "5px"
-  },
-  paintingCanvas: {
-    position: "absolute",
-    inset: "clamp(6px, 0.8vw, 8px)",
-    background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    // border: "3px solid rgba(139,0,0,0.3)",
+    // borderRadius: "10px"
   },
-  skullInFrame: {
-    fontSize: "clamp(2.8rem, 3.5vw, 3.5rem)",
-    opacity: 0.6,
-    filter: "grayscale(1) brightness(0.5)",
-    animation: "pulse 5s ease-in-out infinite"
-  },
-  bookshelf: {
+  lockImage: {
     position: "absolute",
-    top: "20%",
-    right: "8%",
-    width: "clamp(144px, 18vw, 180px)",
-    height: "clamp(304px, 38vh, 380px)",
-    zIndex: 6,
-    transform: "scale(clamp(0.8, 1vw, 1))"
-  },
-  shelfBack: {
-    position: "absolute",
-    inset: 0,
-    background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 50%, #000 100%)",
-    borderRadius: "10px",
-    boxShadow: "0 20px 60px rgba(0,0,0,0.95), inset 0 8px 40px rgba(0,0,0,0.9)"
-  },
-  shelf1: {
-    position: "absolute",
-    width: "calc(100% - clamp(16px, 2vw, 20px))",
-    height: "clamp(10px, 1.2vh, 12px)",
-    left: "clamp(8px, 1vw, 10px)",
-    top: "30%",
-    background: "linear-gradient(to bottom, #2a2520, #1a1510)",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.9)"
-  },
-  shelf2: {
-    position: "absolute",
-    width: "calc(100% - clamp(16px, 2vw, 20px))",
-    height: "clamp(10px, 1.2vh, 12px)",
-    left: "clamp(8px, 1vw, 10px)",
-    top: "65%",
-    background: "linear-gradient(to bottom, #2a2520, #1a1510)",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.9)"
-  },
-  book: {
-    position: "absolute",
-    width: "clamp(18px, 2.2vw, 22px)",
-    height: "clamp(56px, 7vh, 70px)",
-    background: "linear-gradient(135deg, #2a1810, #1a1008, #0a0504)",
-    border: "1px solid #000",
-    borderRadius: "2px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.9)"
-  },
-  cobweb: {
-    position: "absolute",
-    top: "clamp(-6px, -0.8vh, -8px)",
-    right: "clamp(-6px, -0.8vw, -8px)",
-    fontSize: "clamp(1.6rem, 2vw, 2rem)",
-    opacity: 0.4,
-    filter: "grayscale(1)",
-    animation: "swing 4s ease-in-out infinite"
-  },
-  oldClock: {
-    position: "absolute",
-    top: "12%",
-    right: "28%",
-    zIndex: 6,
-    transform: "scale(clamp(0.8, 1vw, 1))"
-  },
-  clockFace: {
-    fontSize: "clamp(2.4rem, 3vw, 3rem)",
-    filter: "brightness(0.6) grayscale(0.8)",
-    animation: "swing 4s ease-in-out infinite"
-  },
-  clockGlow: {
-    position: "absolute",
-    width: "clamp(64px, 8vw, 80px)",
-    height: "clamp(64px, 8vh, 80px)",
     top: "50%",
-    left: "50%",
+    left: "75%",
     transform: "translate(-50%, -50%)",
-    background: "radial-gradient(circle, rgba(139,0,0,0.2), transparent 70%)",
-    animation: "pulse 3s ease-in-out infinite",
-    pointerEvents: "none"
-  },
-  floorRug: {
-    position: "absolute",
-    bottom: "2%",
-    left: "50%",
-    transform: "translateX(-50%) perspective(800px) rotateX(65deg) scale(clamp(0.7, 1vw, 1))",
-    width: "clamp(320px, 40vw, 400px)",
-    height: "clamp(200px, 25vh, 250px)",
-    background: "repeating-linear-gradient(45deg, #1a1510, #1a1510 10px, #0f0a08 10px, #0f0a08 20px)",
-    borderRadius: "15px",
-    boxShadow: "0 20px 70px rgba(0,0,0,0.9)",
-    border: "5px solid #000",
-    zIndex: 4,
-    opacity: 0.5
-  },
-  doorWrapper: {
-    position: "absolute",
-    top: "8%",
-    left: "50%",
-    transform: "translateX(-50%) scale(clamp(0.7, 1vw, 1))",
-    zIndex: 10
-  },
-  doorFrame: {
-    position: "absolute",
-    width: "clamp(192px, 24vw, 240px)",
-    height: "clamp(272px, 34vh, 340px)",
-    top: "clamp(-16px, -2vh, -20px)",
-    left: "clamp(-16px, -2vw, -20px)",
-    zIndex: -1
-  },
-  doorFrameTop: {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    width: "100%",
-    height: "clamp(16px, 2vh, 20px)",
-    background: "linear-gradient(to bottom, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "12px 12px 0 0",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.95)"
-  },
-  doorFrameLeft: {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    width: "clamp(16px, 2vw, 20px)",
-    height: "100%",
-    background: "linear-gradient(to right, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "12px 0 0 8px",
-    boxShadow: "inset -5px 0 15px rgba(0,0,0,0.9)"
-  },
-  doorFrameRight: {
-    position: "absolute",
-    right: "0",
-    top: "0",
-    width: "clamp(16px, 2vw, 20px)",
-    height: "100%",
-    background: "linear-gradient(to left, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "0 12px 8px 0",
-    boxShadow: "inset 5px 0 15px rgba(0,0,0,0.9)"
-  },
-  door3D: {
-    position: "relative",
-    width: "clamp(160px, 20vw, 200px)",
-    height: "clamp(256px, 32vh, 320px)"
-  },
-  doorShadow: {
-    position: "absolute",
-    inset: 0,
-    background: "linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.8) 100%)",
-    borderRadius: "15px 15px 2px 2px"
-  },
-  doorPanel: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
-    border: "clamp(6px, 0.8vw, 8px) solid #1a1510",
-    borderRadius: "15px 15px 2px 2px",
-    boxShadow: "inset 0 3px 25px rgba(0,0,0,0.95), 0 15px 60px rgba(0,0,0,0.9)",
-    transform: "rotateX(2deg)"
-  },
-  doorLine1: {
-    position: "absolute",
-    width: "calc(100% - clamp(24px, 3vw, 30px))",
-    height: "3px",
-    top: "38%",
-    left: "clamp(12px, 1.5vw, 15px)",
-    background: "linear-gradient(90deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
-    opacity: 0.6
-  },
-  doorLine2: {
-    position: "absolute",
-    width: "3px",
-    height: "calc(100% - clamp(24px, 3vh, 30px))",
-    left: "50%",
-    top: "clamp(12px, 1.5vh, 15px)",
-    background: "linear-gradient(180deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
-    opacity: 0.6
-  },
-  doorBloodDrip: {
-    position: "absolute",
-    bottom: "20%",
-    right: "25%",
-    fontSize: "clamp(1.2rem, 1.5vw, 1.5rem)",
-    opacity: 0.6,
-    animation: "drip 3s ease-in-out infinite"
-  },
-  doorLock: {
-    position: "absolute",
-    top: "50%",
-    left: "78%",
-    transform: "translate(-50%, -50%) scale(clamp(0.8, 1vw, 1))",
+    width: "4vw",
+    minWidth: "40px",
+    height: "5vh",
+    minHeight: "50px",
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "8px",
     transition: "all 0.4s ease",
-    cursor: "pointer",
     zIndex: 20
   },
-  lockBody: {
-    width: "clamp(28px, 3.5vw, 35px)",
-    height: "clamp(36px, 4.5vh, 45px)",
-    background: "linear-gradient(135deg, #3a3530 0%, #2a2520 15%, #1a1510 100%)",
-    borderRadius: "8px",
-    boxShadow: "inset 0 2px 8px rgba(0,0,0,0.9), 0 4px 18px rgba(0,0,0,0.9)",
-    border: "2px solid #000",
-    position: "relative"
+  lockPlaceholder: {
+    fontSize: "2rem"
   },
-  lockShackle: {
-    position: "absolute",
-    width: "clamp(16px, 2vw, 20px)",
-    height: "clamp(18px, 2.2vh, 22px)",
-    top: "clamp(-14px, -1.8vh, -18px)",
-    left: "50%",
-    transform: "translateX(-50%)",
-    border: "clamp(3px, 0.4vw, 4px) solid #3a3530",
-    borderBottom: "none",
-    borderRadius: "10px 10px 0 0",
-    boxShadow: "inset 0 2px 8px rgba(0,0,0,0.9)"
+  placeholderText: {
+    color: "#666",
+    fontSize: "1rem",
+    textAlign: "center",
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
-  lockKeyhole: {
-    position: "absolute",
-    width: "clamp(6px, 0.8vw, 8px)",
-    height: "clamp(10px, 1.2vh, 12px)",
-    background: "#000",
-    borderRadius: "50% 50% 0 0",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    boxShadow: "inset 0 2px 6px rgba(0,0,0,1), 0 2px 8px rgba(139,0,0,0.3)"
-  },
-  tableWrapper: {
-    position: "absolute",
-    bottom: "5%",
-    left: "50%",
-    transform: "translateX(-50%) perspective(1200px) rotateX(25deg) scale(clamp(0.6, 1vw, 1))",
-    zIndex: 5
-  },
-  tableShadow: {
-    position: "absolute",
-    width: "clamp(760px, 95vw, 950px)",
-    height: "clamp(520px, 65vh, 650px)",
-    top: "clamp(28px, 3.5vh, 35px)",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 75%)",
-    filter: "blur(30px)",
-    zIndex: -1
-  },
-  tableTop: {
-    position: "relative",
-    width: "clamp(720px, 90vw, 900px)",
-    height: "clamp(480px, 60vh, 600px)"
-  },
-  tableEdge: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
-    borderRadius: "clamp(16px, 2vw, 20px)",
-    boxShadow: "0 25px 70px rgba(0,0,0,0.95)"
-  },
-  tableSurface: {
-    position: "absolute",
-    width: "calc(100% - clamp(24px, 3vw, 30px))",
-    height: "calc(100% - clamp(24px, 3vh, 30px))",
-    top: "clamp(12px, 1.5vh, 15px)",
-    left: "clamp(12px, 1.5vw, 15px)",
-    background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 30%, #050302 50%, #0f0a08 70%, #1a1510 100%)",
-    borderRadius: "clamp(12px, 1.5vw, 15px)",
-    boxShadow: "inset 0 5px 25px rgba(0,0,0,0.9)"
-  },
-  tableLeg: {
-    position: "absolute",
-    width: "clamp(56px, 7vw, 70px)",
-    height: "clamp(224px, 28vh, 280px)",
-    background: "linear-gradient(to bottom, #2a2520 0%, #1a1510 15%, #0f0a08 40%, #050302 70%, #000 100%)",
-    borderRadius: "10px",
-    boxShadow: "0 20px 60px rgba(0,0,0,0.95)",
-    transform: "perspective(1000px) rotateX(-20deg)"
-  },
+  
+  // BÀN VÀ KHAY BI - HOÀN TOÀN CỐ ĐỊNH
+  // tableWrapper: {
+  //   position: "fixed",
+  //   bottom: "5vh",
+  //   left: "50%",
+  //   transform: "translateX(-50%) perspective(1200px) rotateX(25deg)",
+  //   zIndex: 5
+  // },
+  // tableShadow: {
+  //   position: "absolute",
+  //   width: "90vw",
+  //   maxWidth: "950px",
+  //   height: "60vh",
+  //   maxHeight: "650px",
+  //   top: "35px",
+  //   left: "50%",
+  //   transform: "translateX(-50%)",
+  //   background: "radial-gradient(ellipse, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 75%)",
+  //   filter: "blur(30px)",
+  //   zIndex: -1
+  // },
+  // tableTop: {
+  //   position: "relative",
+  //   width: "85vw",
+  //   maxWidth: "900px",
+  //   height: "55vh",
+  //   maxHeight: "600px"
+  // },
+  // tableEdge: {
+  //   position: "absolute",
+  //   width: "100%",
+  //   height: "100%",
+  //   background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
+  //   borderRadius: "20px",
+  //   boxShadow: "0 25px 70px rgba(0,0,0,0.95)"
+  // },
+  // tableSurface: {
+  //   position: "absolute",
+  //   width: "calc(100% - 30px)",
+  //   height: "calc(100% - 30px)",
+  //   top: "15px",
+  //   left: "15px",
+  //   background: "linear-gradient(135deg, #1a1510 0%, #0f0a08 30%, #050302 50%, #0f0a08 70%, #1a1510 100%)",
+  //   borderRadius: "15px",
+  //   boxShadow: "inset 0 5px 25px rgba(0,0,0,0.9)"
+  // },
+  // tableLeg: {
+  //   position: "absolute",
+  //   width: "7vw",
+  //   maxWidth: "70px",
+  //   height: "25vh",
+  //   maxHeight: "280px",
+  //   background: "linear-gradient(to bottom, #2a2520 0%, #1a1510 15%, #0f0a08 40%, #050302 70%, #000 100%)",
+  //   borderRadius: "10px",
+  //   boxShadow: "0 20px 60px rgba(0,0,0,0.95)",
+  //   transform: "perspective(1000px) rotateX(-20deg)"
+  // },
+  
+  // KHAY BI TRÊN BÀN
   marbleTray: {
     position: "absolute",
-    top: "50%",
-    left: "50%",
+    top: "60%",
+    left: "35%",
     transform: "translate(-50%, -50%)",
+    width: "24vw",
+    minWidth: "200px",
+    height: "24vh",
+    minHeight: "200px",
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
     cursor: "pointer",
-    zIndex: 100
-  },
-  trayShadow: {
-    position: "absolute",
-    width: "clamp(160px, 20vw, 200px)",
-    height: "clamp(160px, 20vh, 200px)",
-    background: "rgba(0,0,0,0.8)",
-    borderRadius: "50%",
-    filter: "blur(25px)",
-    top: "clamp(8px, 1vh, 10px)",
-    left: "clamp(8px, 1vw, 10px)"
-  },
-  trayBody: {
-    position: "relative",
-    width: "clamp(160px, 20vw, 200px)",
-    height: "clamp(160px, 20vh, 200px)",
-    background: "radial-gradient(circle, #1a1510 0%, #0f0a08 100%)",
-    border: "clamp(4px, 0.5vw, 5px) solid #000",
-    borderRadius: "50%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 15px 60px rgba(0,0,0,0.9), inset 0 5px 25px rgba(0,0,0,0.8)"
+    // border: "3px solid rgba(139,0,0,0.3)",
+    // borderRadius: "15px",
+    zIndex: 100
   },
   trayMarbles: {
     display: "flex",
-    gap: "clamp(8px, 1vw, 10px)",
-    marginBottom: "clamp(12px, 1.5vh, 15px)"
+    gap: "10px",
+    marginBottom: "15px"
   },
   miniMarble: {
     width: "clamp(24px, 3vw, 30px)",
@@ -1033,6 +747,8 @@ const styles = {
     padding: "clamp(30px, 4vw, 40px)"
   },
   ghostFace: {
+    position: "fixed",
+    left: "50vh",
     fontSize: "clamp(6rem, 10vw, 8rem)",
     marginBottom: "clamp(20px, 3vh, 30px)",
     animation: "shake 0.5s ease-in-out infinite",
@@ -1082,105 +798,116 @@ const styles = {
     boxShadow: "0 5px 25px rgba(139,0,0,0.4)",
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
+  // MODAL NHẬP MẬT KHẨU
   lockModal: {
     position: "fixed",
     inset: 0,
-    background: "rgba(0,0,0,0.96)",
+    background: "rgba(15,25,30,0.92)",  // ← Màu xanh xám tối thay vì đen
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 3000,
-    animation: "fadeIn 0.3s ease",
-    backdropFilter: "blur(12px)"
+    zIndex: 400,
+    backdropFilter: "blur(12px)",
+    backgroundSize: "cover",
+    backgroundPosition: "center"
   },
-  lockPanel: {
-    background: "linear-gradient(135deg, #0a0a0a 0%, #000 50%, #0a0a0a 100%)",
-    border: "4px solid rgba(139,0,0,0.6)",
-    borderRadius: "clamp(16px, 2vw, 20px)",
-    padding: "clamp(30px, 4vw, 40px)",
+  lockPanel3D: {
+    width: "35vw",
+    maxWidth: "550px",
+    minWidth: "380px",
+    background: "linear-gradient(135deg, #1a2832 0%, #0f1a21 50%, #0a1419 100%)",  // ← Gradient xanh xám cũ kỹ
+    border: "4px solid rgba(60,80,90,0.6)",  // ← Viền xanh xám thay vì đỏ
+    borderRadius: "15px",
+    padding: "40px 30px",
     textAlign: "center",
-    color: "#666",
-    boxShadow: "0 25px 100px rgba(0,0,0,0.98)",
-    minWidth: "clamp(320px, 40vw, 400px)"
-  },
-  lockPanelTitle: {
-    fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
-    fontWeight: "bold",
-    marginBottom: "clamp(12px, 1.5vh, 15px)",
-    textShadow: "0 0 25px rgba(139,0,0,0.8)",
-    color: "#8B0000",
+    color: "#b0b8c0",  // ← Chữ xám nhạt
+    boxShadow: "0 45px 120px rgba(0,0,0,0.99), inset 0 3px 35px rgba(40,60,70,0.3)",  // ← Shadow xanh nhạt
     fontFamily: "'Noto Serif', Georgia, serif"
   },
+  lockPanelTitle: {
+    fontSize: "2.2rem",
+    marginBottom: "25px",
+    textShadow: "0 0 30px rgba(80,110,130,0.8)",  // ← Glow xanh xám
+    fontWeight: "bold",
+    letterSpacing: "3px",
+    color: "#a0b0c0"  // ← Xám xanh nhạt thay vì đỏ
+  },
   lockInstructions: {
-    fontSize: "clamp(0.75rem, 1.1vw, 0.9rem)",
-    color: "#555",
-    marginBottom: "clamp(20px, 2.5vh, 25px)",
-    fontFamily: "'Noto Sans', Arial, sans-serif"
+    fontSize: "1rem",
+    color: "#8090a0",  // ← Xám trung bình
+    marginBottom: "35px",
+    fontStyle: "italic"
   },
   codeDisplay: {
     display: "flex",
     justifyContent: "center",
-    gap: "clamp(12px, 1.5vw, 15px)",
-    marginBottom: "clamp(20px, 2.5vh, 25px)"
+    gap: "25px",
+    marginBottom: "40px"
   },
   digitWrapper: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "clamp(6px, 0.8vh, 8px)"
+    gap: "12px"
   },
   arrowBtn: {
-    background: "linear-gradient(135deg, rgba(20,20,20,0.9), rgba(10,10,10,0.95))",
-    border: "2px solid rgba(139,0,0,0.5)",
-    color: "#666",
-    width: "clamp(32px, 4vw, 40px)",
-    height: "clamp(22px, 2.8vh, 28px)",
+    width: "60px",
+    height: "50px",
+    background: "linear-gradient(135deg, rgba(40,50,60,0.9), rgba(25,35,45,0.95))",  // ← Xanh xám tối
+    border: "3px solid rgba(70,90,100,0.5)",  // ← Viền xanh xám
+    color: "#b0b8c0",  // ← Chữ xám nhạt
+    fontSize: "1.4rem",
+    borderRadius: "8px",
     cursor: "pointer",
-    fontSize: "clamp(0.65rem, 1vw, 0.8rem)",
-    borderRadius: "5px",
     fontWeight: "bold",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s ease",
+    boxShadow: "0 6px 20px rgba(0,0,0,0.8)",
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
-  digit: {
-    width: "clamp(40px, 5vw, 50px)",
-    height: "clamp(48px, 6vh, 60px)",
-    background: "linear-gradient(135deg, #0a0a0a 0%, #000 40%, #050505 70%, #000 100%)",
-    border: "3px solid rgba(139,0,0,0.6)",
-    borderRadius: "8px",
+  digit3D: {
+    width: "85px",
+    height: "100px",
+    background: "linear-gradient(135deg, #0f1a21 0%, #0a1419 40%, #060d12 70%, #000 100%)",  // ← Gradient xanh đen
+    border: "4px solid rgba(60,80,95,0.6)",  // ← Viền xanh xám
+    borderRadius: "15px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "clamp(1.8rem, 2.8vw, 2.2rem)",
-    color: "#8B0000",
+    fontSize: "3.8rem",
+    color: "#90a5b5",  // ← Số màu xám xanh nhạt thay vì đỏ
     fontWeight: "bold",
-    boxShadow: "inset 0 3px 15px rgba(0,0,0,0.99)",
-    textShadow: "0 0 20px rgba(139,0,0,0.8)",
+    boxShadow: "inset 0 8px 35px rgba(0,0,0,0.99), 0 10px 40px rgba(50,70,80,0.4)",  // ← Shadow xanh
+    textShadow: "0 0 40px rgba(100,130,150,0.7), 0 0 70px rgba(80,110,130,0.4)",  // ← Glow xanh xám
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   unlockBtn: {
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(100,0,0,0.9))",
-    border: "3px solid rgba(139,0,0,0.8)",
-    color: "#fff",
-    padding: "clamp(12px, 1.5vh, 15px) clamp(32px, 4vw, 40px)",
-    fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
-    cursor: "pointer",
-    borderRadius: "10px",
-    fontWeight: "bold",
-    marginBottom: "clamp(10px, 1.2vh, 12px)",
     width: "100%",
-    boxShadow: "0 5px 25px rgba(139,0,0,0.6)",
+    background: "linear-gradient(135deg, rgba(50,70,85,0.8) 0%, rgba(40,60,75,0.9) 35%, rgba(30,50,65,0.95) 70%, rgba(20,40,55,1) 100%)",  // ← Gradient xanh xám
+    border: "4px solid rgba(60,85,100,0.8)",  // ← Viền xanh
+    color: "#d0d8e0",  // ← Chữ xám rất nhạt
+    padding: "20px 0",
+    fontSize: "1.5rem",
+    borderRadius: "15px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    letterSpacing: "3px",
+    marginBottom: "20px",
+    boxShadow: "0 15px 50px rgba(40,60,75,0.6), inset 0 3px 15px rgba(100,120,140,0.2)",  // ← Shadow xanh
+    transition: "all 0.3s ease",
+    textShadow: "0 2px 8px rgba(0,0,0,0.9)",
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   cancelBtn: {
-    background: "transparent",
-    border: "2px solid rgba(80,80,80,0.5)",
-    color: "#555",
-    padding: "clamp(8px, 1vh, 10px) clamp(24px, 3vw, 30px)",
-    fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)",
-    cursor: "pointer",
-    borderRadius: "8px",
     width: "100%",
+    background: "transparent",
+    border: "3px solid rgba(80,95,110,0.5)",  // ← Viền xám xanh
+    color: "#8090a0",  // ← Chữ xám trung bình
+    padding: "15px 0",
+    fontSize: "1.05rem",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    transition: "all 0.3s ease",
     fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   winBox: {

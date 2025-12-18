@@ -5,7 +5,7 @@ import note from "../Img/note-Photoroom.png"
 import lock from "../Img/locks.png"
 import deckBg from "../Img/bgdeck.jpg"  // ← Nền khi mở khay bài
 import notePanelBg from "../Img/BGNote.png" // ← Nền của panel note
-
+// import cardBg from "../Img/ImgCard.png" 
 
 // Load Google Fonts hỗ trợ tiếng Việt
 const loadFonts = () => {

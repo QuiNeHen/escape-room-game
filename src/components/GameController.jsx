@@ -40,7 +40,7 @@ export default function GameController() {
   }, []);
 
   const startGame = () => setCurrentScreen("instructions");
-  const goToRoom1 = () => setCurrentScreen("room1");
+  const goToRoom1 = () => setCurrentScreen("room2");
   const goToRoom2 = () => setCurrentScreen("room2");
   const goToRoom3 = () => setCurrentScreen("room3");
   const goToRoom4 = () => setCurrentScreen("room4");
