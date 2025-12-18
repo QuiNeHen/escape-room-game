@@ -102,12 +102,12 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Phiên bản: 2.0 | Ngày hoàn thiện: [17/12/2025]
+            Version: 2.1 | Update: [18/12/2025]
           </p>
         </div>
 
         <button style={styles.startGameBtn} onClick={onContinue}>
-          SẴN SÀNG PHIÊU LƯU →
+          SẴN SÀNG THỬ THÁCH →
         </button>
       </div>
     </div>
