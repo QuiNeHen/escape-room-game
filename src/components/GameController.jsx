@@ -75,6 +75,7 @@ function InstructionsScreen({ onContinue }) {
         
         <div style={styles.instructionsBox}>
           <h2 style={styles.sectionTitle}>HIỆN THỰC Ý TƯỞNG TỪ CHƯƠNG TRÌNH THỰC TẾ</h2>
+          <h2 style={styles.sectionTitle}>(Đang trong giai đoạn hoàn thiện)</h2>
           <p style={styles.instructionText}>
             Nếu các bạn có đam mê về giải mã, giải đố và nhập vai vào một câu chuyện thì chắc hẳn
             sẽ biết đến chương trình Trốn Thoát Khỏi Mật Thất.
@@ -102,7 +103,10 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Version: 2.2 | Update: [18/12/2025]
+            Version: 2.4 | Update: [19/12/2025]
+          </p>
+          <p style={styles.instructionText}>
+            MỌI NGƯỜI LƯU Ý CHƠI Ở ĐỘ RỘNG ZOOM: 67% LÀ ĐẸP NHẤT NHÉ !!!
           </p>
         </div>
 

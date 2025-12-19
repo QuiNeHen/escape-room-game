@@ -31,7 +31,7 @@ export default function Room1({ onComplete }) {
   const audioRef = useRef(null);
   const [eliminatedCards, setEliminatedCards] = useState(new Set());
   const [hoveredObject, setHoveredObject] = useState(null);
-
+  const [isFirstOpen, setIsFirstOpen] = useState(true); // Track first open
   const correctCode = ["7", "3", "2", "9"];
 
   const cards = [
@@ -103,7 +103,8 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
     
-    if (deckOpen) {
+    // CHỈ khởi tạo vị trí vòng tròn khi MỞ LẦN ĐẦU
+    if (deckOpen && isFirstOpen) {
       const positions = {};
       cards.forEach((card, i) => {
         const angle = (i / cards.length) * Math.PI * 2;
@@ -115,13 +116,14 @@ HÃY TÌM THẤY NÓ TRƯỚC KHI MỌI CHUYỆN TỆ HƠN!`;
         };
       });
       setCardPositions(positions);
+      setIsFirstOpen(false); // Đánh dấu đã mở lần đầu
     }
     
     return () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     };
-  }, [deckOpen]);
+  }, [deckOpen]); // Chỉ phụ thuộc vào deckOpen
 
   useEffect(() => {
     if (audioRef.current) {
