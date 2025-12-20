@@ -1,5 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 
+// ========== IMPORT CÁC HÌNH ẢNH TẠI ĐÂY ==========
+import RoomBg from "../Img/room5.png"           // Nền phòng
+import DoorImage from "../Img/lock5.jpg"           // Cửa có khóa
+import NoteImage from "../Img/note5.png"          // Giấy note
+
+// Load Google Fonts hỗ trợ tiếng Việt
+const loadFonts = () => {
+  if (!document.querySelector('#room5-fonts')) {
+    const link = document.createElement('link');
+    link.id = 'room5-fonts';
+    link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Serif:wght@400;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+};
+
 export default function Room5({ onComplete }) {
   const [stage, setStage] = useState("intro");
   const [noteOpen, setNoteOpen] = useState(false);
@@ -9,15 +25,19 @@ export default function Room5({ onComplete }) {
   const [isCorrect, setIsCorrect] = useState(false);
   const audioRef = useRef(null);
 
+  // ========== PLACEHOLDER CHO HÌNH ẢNH ==========
+  const roomBackground = RoomBg;          // RoomBg - Hình nền phòng
+  const doorImage = DoorImage;               // DoorImage - Cửa có khóa
+  const noteImage = NoteImage;                // NoteImage - Giấy note
+
   // Đáp án đúng: grid1=(3,4), grid2=(2,3), grid3=(3,4), grid4=(5,4)
   const correctAnswer = {
-    1: { row: 3, col: 3 }, // HẾT (index 0-based)
-    2: { row: 1, col: 2 }, // DÁM
-    3: { row: 2, col: 3 }, // YÊU
-    4: { row: 4, col: 3 }  // AI
+    1: { row: 3, col: 3 },
+    2: { row: 1, col: 2 },
+    3: { row: 2, col: 3 },
+    4: { row: 4, col: 3 }
   };
 
-  // 4 lưới 6x6, mỗi ô có chữ
   const grids = [
     {
       id: 1,
@@ -80,6 +100,8 @@ Người đó đã ghi chú:
 `;
 
   useEffect(() => {
+    loadFonts();
+    
     if (stage === "room" && audioRef.current) {
       audioRef.current.volume = 0.25;
       audioRef.current.play().catch(() => {});
@@ -131,7 +153,6 @@ Người đó đã ghi chú:
   };
 
   useEffect(() => {
-    // Kiểm tra tự động khi đủ 4 ô
     if (Object.keys(selectedCells).length === 4) {
       const checkCorrect = Object.keys(correctAnswer).every(gridId => {
         const selected = selectedCells[gridId];
@@ -164,7 +185,6 @@ Người đó đã ghi chú:
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
       if (stage === "room" && !noteOpen) {
-        // Xử lý phím cho grid đầu tiên có selection
         const firstGridWithSelection = grids.find(g => selectedCells[g.id]);
         if (firstGridWithSelection) {
           handleKeyDown(e, firstGridWithSelection.id);
@@ -200,7 +220,12 @@ Người đó đã ghi chú:
       {stage === "room" && (
         <>
           <div style={styles.roomContainer}>
-            <div style={styles.roomBg}></div>
+            {/* HÌNH NỀN PHÒNG */}
+            <div style={{
+              ...styles.roomBg,
+              backgroundImage: roomBackground ? `url(${roomBackground})` : 'none'
+            }}></div>
+            
             <div style={styles.fog}></div>
             <div style={styles.vignette}></div>
 
@@ -208,53 +233,52 @@ Người đó đã ghi chú:
             <div style={{...styles.chains, top: "5%", left: "5%"}}>⛓️</div>
             <div style={{...styles.chains, top: "5%", right: "5%"}}>⛓️</div>
 
-            {/* Đèn trần */}
-            <div style={styles.ceilingLamp}>
-              <div style={styles.lampCord}></div>
-              <div style={styles.lampShade}>
-                <div style={styles.lampTop}></div>
-                <div style={styles.lampBottom}></div>
-                <div style={styles.lampGlow}></div>
-              </div>
-            </div>
-
-            {/* Cửa */}
+            {/* CÁNH CỬA - DÙNG HÌNH HOẶC VẼ CSS */}
             <div
               style={{
                 ...styles.doorWrapper,
+                backgroundImage: doorImage ? `url(${doorImage})` : 'none',
+                backgroundSize: doorImage ? 'contain' : 'auto',
+                backgroundPosition: doorImage ? 'center' : 'auto',
+                backgroundRepeat: doorImage ? 'no-repeat' : 'auto',
                 filter: isWrong
-                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(255,0,0,0.9))"
+                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(255, 0, 0, 0.9))"
                   : isCorrect
-                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(0,255,0,0.9))"
+                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(4, 255, 0, 0.9))"
                   : "brightness(0.7)",
                 transition: "all 0.5s ease"
               }}
             >
-              <div style={styles.doorFrame}>
-                <div style={styles.doorFrameTop}></div>
-                <div style={styles.doorFrameLeft}></div>
-                <div style={styles.doorFrameRight}></div>
-              </div>
-              <div style={styles.door3D}>
-                <div style={styles.doorPanel}>
-                  <div style={styles.doorLine1}></div>
-                  <div style={styles.doorLine2}></div>
-                </div>
-                <div style={{
-                  ...styles.doorLock,
-                  opacity: isCorrect ? 0 : 1,
-                  animation: isWrong
-                    ? "shake 0.5s ease"
-                    : isCorrect
-                    ? "unlocking 1s ease-out"
-                    : "none"
-                }}>
-                  <div style={styles.lockShackle}></div>
-                  <div style={styles.lockBody}>
-                    <div style={styles.lockKeyhole}></div>
+              {/* Chỉ vẽ CSS nếu KHÔNG có hình cửa */}
+              {!doorImage && (
+                <>
+                  <div style={styles.doorFrame}>
+                    <div style={styles.doorFrameTop}></div>
+                    <div style={styles.doorFrameLeft}></div>
+                    <div style={styles.doorFrameRight}></div>
                   </div>
-                </div>
-              </div>
+                  <div style={styles.door3D}>
+                    <div style={styles.doorPanel}>
+                      <div style={styles.doorLine1}></div>
+                      <div style={styles.doorLine2}></div>
+                    </div>
+                    <div style={{
+                      ...styles.doorLock,
+                      opacity: isCorrect ? 0 : 1,
+                      animation: isWrong
+                        ? "shake 0.5s ease"
+                        : isCorrect
+                        ? "unlocking 1s ease-out"
+                        : "none"
+                    }}>
+                      <div style={styles.lockShackle}></div>
+                      <div style={styles.lockBody}>
+                        <div style={styles.lockKeyhole}></div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* 4 lưới chữ nằm ngang */}
@@ -279,7 +303,6 @@ Người đó đã ghi chú:
                         </div>
                       ))}
                       
-                      {/* Khung chọn - chỉ hiện khi có selection */}
                       {selected && (
                         <div
                           style={{
@@ -299,27 +322,23 @@ Người đó đã ghi chú:
               })}
             </div>
 
-            {/* Hướng dẫn */}
-            {/* <div style={styles.instruction}>
-              💡 Click vào ô để chọn • Phím mũi tên để di chuyển
-            </div> */}
-
             {/* Note ở góc trái dưới */}
             <div style={styles.noteWrapper}>
               <div style={styles.noteShadow}></div>
               <div
                 style={{
                   ...styles.noteIcon,
+                  backgroundImage: noteImage ? `url(${noteImage})` : 'none',
                   transform: hovered === "note" ? "scale(1.15) rotate(5deg)" : "scale(1)",
                   filter: hovered === "note"
-                    ? "brightness(1.4) drop-shadow(0 0 40px rgba(139,0,0,0.9))"
-                    : "drop-shadow(0 8px 25px rgba(139,0,0,0.8))"
+                    ? "brightness(1.4) drop-shadow(0 0 40px rgba(139,69,19,0.9))"
+                    : "drop-shadow(0 8px 25px rgba(139,69,19,0.8))"
                 }}
                 onClick={() => setNoteOpen(true)}
                 onMouseEnter={() => setHovered("note")}
                 onMouseLeave={() => setHovered(null)}
               >
-                📄
+                {!noteImage && "📄"}
               </div>
             </div>
           </div>
@@ -341,12 +360,6 @@ Người đó đã ghi chú:
         <div style={styles.screen}>
           <div style={styles.winBox}>
             <h1 style={styles.winTitle}>🎉 GIẢI MÃ THÀNH CÔNG!</h1>
-            {/* <p style={styles.winText}>
-              Bạn đã tìm ra thông điệp ẩn:
-            </p>
-            <div style={styles.secretMessage}>
-              HẾT DÁM YÊU AI
-            </div> */}
             <p style={styles.winSubtext}>Cửa đã mở... Bạn có thể tiếp tục hành trình!</p>
             <div style={styles.sparkles}>✨ 🔓 ✨ 🔓 ✨</div>
           </div>
@@ -369,13 +382,15 @@ const styles = {
   roomBg: {
     position: "absolute",
     inset: 0,
-    background: "linear-gradient(180deg, #000000 0%, #0a0a0a 30%, #050505 60%, #000 100%)",
+    background: "linear-gradient(180deg, #1a1510 0%, #0f0a08 30%, #050302 60%, #000 100%)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
     zIndex: 1
   },
   fog: {
     position: "absolute",
     inset: 0,
-    background: "radial-gradient(ellipse at 50% 80%, rgba(40,40,60,0.25) 0%, transparent 60%)",
+    background: "radial-gradient(ellipse at 50% 80%, rgba(80,60,40,0.15) 0%, transparent 60%)",
     animation: "fogMove 15s ease-in-out infinite",
     pointerEvents: "none",
     zIndex: 2
@@ -390,7 +405,7 @@ const styles = {
   chains: {
     position: "absolute",
     fontSize: "1.8rem",
-    color: "#333",
+    color: "#4a3520",
     opacity: 0.3,
     textShadow: "0 2px 8px rgba(0,0,0,0.9)",
     animation: "swing 3s ease-in-out infinite",
@@ -402,7 +417,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "#666",
+    color: "#8B6F47",
     animation: "fadeIn 0.8s ease-in",
     zIndex: 100
   },
@@ -411,26 +426,28 @@ const styles = {
     textAlign: "center",
     padding: "40px",
     background: "rgba(10, 10, 10, 0.95)",
-    border: "4px solid rgba(139,0,0,0.6)",
+    border: "4px solid rgba(139,69,19,0.6)",
     borderRadius: "15px",
     boxShadow: "0 25px 80px rgba(0,0,0,0.95)"
   },
   introTitle: {
     fontSize: "2.5rem",
-    color: "#8B0000",
+    color: "#8B4513",
     marginBottom: "30px",
-    textShadow: "0 0 35px rgba(139, 0, 0, 0.8)"
+    textShadow: "0 0 35px rgba(139, 69, 19, 0.8)",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   storyText: {
     fontSize: "1.3rem",
     lineHeight: "2",
     marginBottom: "20px",
-    color: "#999"
+    color: "#A0826D",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   continueBtn: {
     marginTop: "30px",
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
-    border: "3px solid rgba(139,0,0,0.8)",
+    background: "linear-gradient(135deg, rgba(139,69,19,0.8), rgba(101,67,33,0.9))",
+    border: "3px solid rgba(139,69,19,0.8)",
     color: "#fff",
     padding: "16px 45px",
     fontSize: "1.2rem",
@@ -438,7 +455,7 @@ const styles = {
     borderRadius: "10px",
     transition: "all 0.3s ease",
     fontWeight: "bold",
-    fontFamily: "Arial, sans-serif"
+    fontFamily: "'Noto Sans', Arial, sans-serif"
   },
   roomContainer: {
     width: "100%",
@@ -446,57 +463,14 @@ const styles = {
     position: "relative",
     overflow: "hidden"
   },
-  ceilingLamp: {
-    position: "absolute",
-    top: "3%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 8
-  },
-  lampCord: {
-    width: "3px",
-    height: "60px",
-    background: "linear-gradient(to bottom, #222, #000)",
-    margin: "0 auto",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.9)"
-  },
-  lampShade: {
-    position: "relative",
-    width: "100px",
-    height: "50px"
-  },
-  lampTop: {
-    width: "40px",
-    height: "10px",
-    background: "linear-gradient(135deg, #2a2520, #1a1510)",
-    borderRadius: "50%",
-    margin: "0 auto",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.8)"
-  },
-  lampBottom: {
-    width: "100px",
-    height: "50px",
-    background: "linear-gradient(135deg, #3a3025 0%, #2a2520 50%, #1a1510 100%)",
-    borderRadius: "0 0 50% 50%",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.9)",
-    border: "2px solid #000",
-    margin: "0 auto"
-  },
-  lampGlow: {
-    width: "200px",
-    height: "200px",
-    background: "radial-gradient(circle, rgba(139,0,0,0.15), transparent 70%)",
-    position: "absolute",
-    bottom: "-60px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    animation: "lightFlicker 4s ease-in-out infinite",
-    pointerEvents: "none"
-  },
+  
+  // ========== CÁNH CỬA ==========
   doorWrapper: {
-    position: "absolute",
-    top: "10%",
-    right: "3%",
+    position: "fixed",
+    top: "5%",
+    right: "5%",
+    width: "140px",
+    height: "200px",
     zIndex: 10
   },
   doorFrame: {
@@ -513,7 +487,7 @@ const styles = {
     top: "0",
     width: "100%",
     height: "10px",
-    background: "linear-gradient(to bottom, #000 0%, #0a0a0a 60%, #1a1510 100%)",
+    background: "linear-gradient(to bottom, #2a2520 0%, #1a1510 60%, #0f0a08 100%)",
     borderRadius: "6px 6px 0 0",
     boxShadow: "0 8px 25px rgba(0,0,0,0.95)"
   },
@@ -523,7 +497,7 @@ const styles = {
     top: "0",
     width: "10px",
     height: "80%",
-    background: "linear-gradient(to right, #000 0%, #0a0a0a 60%, #1a1510 100%)",
+    background: "linear-gradient(to right, #2a2520 0%, #1a1510 60%, #0f0a08 100%)",
     borderRadius: "6px 0 0 4px",
     boxShadow: "inset -5px 0 15px rgba(0,0,0,0.9)"
   },
@@ -533,7 +507,7 @@ const styles = {
     top: "0",
     width: "10px",
     height: "80%",
-    background: "linear-gradient(to left, #000 0%, #0a0a0a 60%, #1a1510 100%)",
+    background: "linear-gradient(to left, #2a2520 0%, #1a1510 60%, #0f0a08 100%)",
     borderRadius: "0 6px 4px 0",
     boxShadow: "inset 5px 0 15px rgba(0,0,0,0.9)"
   },
@@ -546,7 +520,7 @@ const styles = {
     position: "relative",
     width: "100%",
     height: "80%",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
+    background: "linear-gradient(135deg, #3a2f1e 0%, #2a2418 15%, #1a1510 35%, #0f0a08 50%, #1a1510 65%, #2a2418 85%, #3a2f1e 100%)",
     border: "4px solid #1a1510",
     borderRadius: "8px 8px 2px 2px",
     boxShadow: "inset 0 3px 20px rgba(0,0,0,0.95), 0 12px 50px rgba(0,0,0,0.9)"
@@ -557,7 +531,7 @@ const styles = {
     height: "2px",
     top: "38%",
     left: "8px",
-    background: "linear-gradient(90deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
+    background: "linear-gradient(90deg, transparent, #1a1510 20%, #1a1510 80%, transparent)",
     opacity: 0.6
   },
   doorLine2: {
@@ -566,7 +540,7 @@ const styles = {
     height: "calc(100% - 15px)",
     left: "50%",
     top: "8px",
-    background: "linear-gradient(180deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
+    background: "linear-gradient(180deg, transparent, #1a1510 20%, #1a1510 80%, transparent)",
     opacity: 0.6
   },
   doorLock: {
@@ -580,10 +554,10 @@ const styles = {
   lockBody: {
     width: "22px",
     height: "30px",
-    background: "linear-gradient(135deg, #3a3530 0%, #2a2520 15%, #1a1510 100%)",
+    background: "linear-gradient(135deg, #4a3520 0%, #3a2810 15%, #2a1808 100%)",
     borderRadius: "5px",
     boxShadow: "inset 0 2px 8px rgba(0,0,0,0.9), 0 4px 15px rgba(0,0,0,0.9)",
-    border: "2px solid #000",
+    border: "2px solid #1a1510",
     position: "relative"
   },
   lockShackle: {
@@ -593,7 +567,7 @@ const styles = {
     top: "-11px",
     left: "50%",
     transform: "translateX(-50%)",
-    border: "2px solid #3a3530",
+    border: "2px solid #4a3520",
     borderBottom: "none",
     borderRadius: "6px 6px 0 0",
     boxShadow: "inset 0 2px 6px rgba(0,0,0,0.9)"
@@ -609,6 +583,8 @@ const styles = {
     transform: "translate(-50%, -50%)",
     boxShadow: "inset 0 2px 6px rgba(0,0,0,1)"
   },
+  
+  // ========== LƯỚI CHỮ ==========
   gridsContainer: {
     position: "absolute",
     top: "50%",
@@ -622,8 +598,8 @@ const styles = {
     zIndex: 7
   },
   gridWrapper: {
-    background: "rgba(10,10,10,0.85)",
-    border: "3px solid rgba(139,0,0,0.5)",
+    background: "rgba(26, 21, 16, 0.85)",
+    border: "3px solid rgba(139,69,19,0.5)",
     borderRadius: "10px",
     padding: "10px",
     boxShadow: "0 12px 40px rgba(0,0,0,0.9)"
@@ -644,16 +620,16 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "0.85rem",
+    fontSize: "1rem",  // ← Tăng từ 0.85rem lên 1rem
     fontWeight: "bold",
-    color: "#999",
+    color: "#FFFFFF",  // ← Chữ trắng
     cursor: "pointer",
     transition: "all 0.2s ease",
     position: "relative",
     borderRadius: "0",
-    fontFamily: "Arial, sans-serif",
-    border: "1px solid rgba(139,0,0,0.15)",
-    background: "rgba(20,20,20,0.6)"
+    fontFamily: "'Noto Sans', Arial, sans-serif",
+    border: "1px solid rgba(139,69,19,0.15)",
+    background: "rgba(42, 36, 24, 0.6)"
   },
   selector: {
     position: "absolute",
@@ -664,37 +640,15 @@ const styles = {
   selectorInner: {
     width: "100%",
     height: "100%",
-    border: "4px solid #DC143C",
+    border: "4px solid #CD853F",
     borderRadius: "4px",
-    boxShadow: "0 0 20px rgba(220,20,60,0.9), inset 0 0 15px rgba(220,20,60,0.4)",
+    boxShadow: "0 0 20px rgba(205,133,63,0.9), inset 0 0 15px rgba(205,133,63,0.4)",
     animation: "selectorPulse 1.5s ease-in-out infinite"
   },
-  gridLabel: {
-    textAlign: "center",
-    fontSize: "0.75rem",
-    color: "#666",
-    marginTop: "5px",
-    fontFamily: "Arial, sans-serif",
-    fontWeight: "bold"
-  },
-  instruction: {
-    position: "absolute",
-    top: "8%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    background: "rgba(10,10,10,0.9)",
-    border: "2px solid rgba(139,0,0,0.5)",
-    borderRadius: "8px",
-    padding: "8px 20px",
-    fontSize: "0.9rem",
-    color: "#999",
-    textAlign: "center",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.8)",
-    zIndex: 100,
-    fontFamily: "Arial, sans-serif"
-  },
+  
+  // ========== NOTE ==========
   noteWrapper: {
-    position: "absolute",
+    position: "fixed",
     bottom: "3%",
     left: "3%",
     zIndex: 50
@@ -703,18 +657,26 @@ const styles = {
     position: "absolute",
     width: "100px",
     height: "100px",
-    background: "radial-gradient(ellipse, rgba(139,0,0,0.6) 0%, transparent 70%)",
+    background: "radial-gradient(ellipse, rgba(139,69,19,0.6) 0%, transparent 70%)",
     filter: "blur(15px)",
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)"
   },
   noteIcon: {
+    width: "150px",
+    height: "150px",
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
     fontSize: "5rem",
     cursor: "pointer",
     transition: "all 0.3s ease",
-    filter: "drop-shadow(0 8px 25px rgba(139,0,0,0.8))",
-    position: "relative"
+    filter: "drop-shadow(0 8px 25px rgba(139,69,19,0.8))",
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   noteModal: {
     position: "fixed",
@@ -727,8 +689,8 @@ const styles = {
     backdropFilter: "blur(12px)"
   },
   notePanel: {
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 35%, #0f0a08 70%, #050302 100%)",
-    border: "6px solid rgba(139,0,0,0.6)",
+    background: "#FFFFFF",  // ← Nền trắng
+    border: "6px solid rgba(139,69,19,0.8)",  // ← Viền nâu đậm hơn
     borderRadius: "15px",
     padding: "40px",
     maxWidth: "650px",
@@ -744,8 +706,8 @@ const styles = {
     right: "15px",
     width: "38px",
     height: "38px",
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
-    border: "3px solid #000",
+    background: "linear-gradient(135deg, rgba(139,69,19,0.8), rgba(101,67,33,0.9))",
+    border: "3px solid #1a1510",
     borderRadius: "50%",
     color: "#fff",
     fontSize: "1.4rem",
@@ -754,23 +716,23 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     transition: "all 0.3s ease",
-    fontFamily: "Arial, sans-serif",
+    fontFamily: "'Noto Sans', Arial, sans-serif",
     zIndex: 10
   },
   noteTitle: {
     fontSize: "2rem",
-    color: "#8B0000",
+    color: "#8B4513",
     textAlign: "center",
     marginBottom: "25px",
-    textShadow: "0 0 25px rgba(139,0,0,0.8)",
-    fontFamily: "Georgia, serif"
+    textShadow: "none",  // ← Bỏ shadow vì nền trắng
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   noteText: {
     fontSize: "1.2rem",
-    color: "#c9b896",
+    color: "#000000",  // ← Chữ đen
     lineHeight: "2",
     whiteSpace: "pre-wrap",
-    fontFamily: "Georgia, serif"
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   winBox: {
     textAlign: "center",
@@ -778,33 +740,17 @@ const styles = {
   },
   winTitle: {
     fontSize: "4rem",
-    color: "#8B0000",
-    textShadow: "0 0 60px rgba(139,0,0,0.9)",
+    color: "#8B4513",
+    textShadow: "0 0 60px rgba(139, 69, 19, 0.9)",
     marginBottom: "30px",
-    animation: "bounce 1s ease infinite"
-  },
-  winText: {
-    fontSize: "1.6rem",
-    marginBottom: "25px",
-    color: "#999"
-  },
-  secretMessage: {
-    fontSize: "3rem",
-    color: "#8B0000",
-    fontWeight: "bold",
-    textShadow: "0 0 50px rgba(139,0,0,1)",
-    marginBottom: "30px",
-    padding: "25px",
-    background: "rgba(139,0,0,0.1)",
-    border: "4px solid rgba(139,0,0,0.6)",
-    borderRadius: "15px",
-    letterSpacing: "8px",
-    fontFamily: "Arial, sans-serif"
+    animation: "bounce 1s ease infinite",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   winSubtext: {
     fontSize: "1.3rem",
-    color: "#666",
-    marginBottom: "20px"
+    color: "#A0826D",
+    marginBottom: "20px",
+    fontFamily: "'Noto Serif', Georgia, serif"
   },
   sparkles: {
     fontSize: "2.5rem",
@@ -818,16 +764,6 @@ styleSheet.textContent = `
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-  }
-  @keyframes lightFlicker {
-    0%, 100% { opacity: 1; }
-    10% { opacity: 0.2; }
-    12% { opacity: 1; }
-    50% { opacity: 0.8; }
-    60% { opacity: 0.4; }
-    62% { opacity: 1; }
-    70% { opacity: 0.5; }
-    72% { opacity: 1; }
   }
   @keyframes fogMove {
     0%, 100% { transform: translateX(0) scale(1); }
@@ -857,27 +793,27 @@ styleSheet.textContent = `
   }
   @keyframes selectorPulse {
     0%, 100% { 
-      border-color: #DC143C; 
-      box-shadow: 0 0 20px rgba(220,20,60,0.9), inset 0 0 15px rgba(220,20,60,0.4);
+      border-color: #CD853F; 
+      box-shadow: 0 0 20px rgba(205,133,63,0.9), inset 0 0 15px rgba(205,133,63,0.4);
     }
     50% { 
-      border-color: #FF6347; 
-      box-shadow: 0 0 35px rgba(255,99,71,1), inset 0 0 25px rgba(255,99,71,0.6);
+      border-color: #DEB887; 
+      box-shadow: 0 0 35px rgba(222,184,135,1), inset 0 0 25px rgba(222,184,135,0.6);
     }
   }
   
   .continueBtn:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 40px rgba(139,0,0,0.9);
+    box-shadow: 0 10px 40px rgba(139,69,19,0.9);
   }
   
   .closeBtn:hover {
     transform: rotate(90deg) scale(1.1);
-    background: linear-gradient(135deg, rgba(180,0,0,0.9), rgba(120,0,0,0.95));
+    background: linear-gradient(135deg, rgba(180,90,30,0.9), rgba(140,85,40,0.95));
   }
   
   .gridCell:hover {
-    background: rgba(139,0,0,0.2);
+    background: rgba(139,69,19,0.2);
     transform: scale(1.05);
   }
 `;

@@ -1,5 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
+
+// ========== IMPORT CÁC HÌNH ẢNH TẠI ĐÂY ==========
 import posterImg from "../Img/BPQ CÔNG TY TÀI CHÍNH.png"
+import roomBg7 from "../Img/room7.png"  // Nền phòng
+// import doorImg7 from "../Img/lock7.png"  // Cửa
+import lockImg7 from "../Img/lock7.png"  // Ổ khóa trên cửa
+import frameImg7 from "../Img/BPQ CÔNG TY TÀI CHÍNH.png"  // Khung tranh
+
+// Placeholder
+const roomBg = roomBg7;  // Uncomment khi có ảnh
+// const doorImg = doorImg7;  // Uncomment khi có ảnh
+const lockImg = lockImg7;  // Uncomment khi có ảnh
+const frameImg = frameImg7;  // Uncomment khi có ảnh
+const posterUrl = posterImg;
 
 export default function Room7({ onComplete }) {
   const [stage, setStage] = useState("intro");
@@ -11,8 +24,7 @@ export default function Room7({ onComplete }) {
   const [isCorrect, setIsCorrect] = useState(false);
   const audioRef = useRef(null);
 
-  const correctPassword = "245"; // Bạn có thể thay đổi mật khẩu đúng ở đây
-  const posterUrl = posterImg; // Link poster sẽ thêm sau
+  const correctPassword = "245";
 
   useEffect(() => {
     if (stage === "room" && audioRef.current) {
@@ -22,7 +34,6 @@ export default function Room7({ onComplete }) {
   }, [stage]);
 
   const handleNumberClick = (num) => {
-    // Tìm ô trống đầu tiên để điền
     const emptyIndex = password.findIndex(d => d === "");
     if (emptyIndex !== -1) {
       const newPassword = [...password];
@@ -32,7 +43,6 @@ export default function Room7({ onComplete }) {
   };
 
   const handleBackspace = () => {
-    // Xóa số cuối cùng
     for (let i = password.length - 1; i >= 0; i--) {
       if (password[i] !== "") {
         const newPassword = [...password];
@@ -77,7 +87,6 @@ export default function Room7({ onComplete }) {
             <p style={styles.storyText}>Bạn bước vào một căn phòng làm việc...</p>
             <p style={styles.storyText}>Trên tường có một tấm poster bí ẩn.</p>
             <p style={styles.storyText}>Cửa phòng có ổ khóa số...</p>
-            {/* <p style={styles.storyText}>Liệu poster có chứa manh mối?</p> */}
             <button style={styles.continueBtn} onClick={() => setStage("room")}>
               ĐIỀU TRA →
             </button>
@@ -88,101 +97,72 @@ export default function Room7({ onComplete }) {
       {stage === "room" && (
         <>
           <div style={styles.roomContainer}>
-            <div style={styles.roomBg}></div>
+            {/* HÌNH NỀN PHÒNG */}
+            <div style={{
+              ...styles.roomBg,
+              backgroundImage: roomBg ? `url(${roomBg})` : 'none'
+            }}></div>
+
             <div style={styles.fog}></div>
             <div style={styles.vignette}></div>
 
-            {/* Chains */}
-            <div style={{...styles.chains, top: "5%", left: "5%"}}>⛓️</div>
-            <div style={{...styles.chains, top: "5%", right: "5%"}}>⛓️</div>
-
-            {/* Đèn trần */}
-            <div style={styles.ceilingLamp}>
-              <div style={styles.lampCord}></div>
-              <div style={styles.lampShade}>
-                <div style={styles.lampTop}></div>
-                <div style={styles.lampBottom}></div>
-                <div style={styles.lampGlow}></div>
+            {/* ========== CỬA VÀ Ổ KHÓA ========== */}
+            <div style={styles.doorWrapper}>
+              <div 
+                style={{
+                  ...styles.doorImage,
+                  // backgroundImage: doorImg ? `url(${doorImg})` : 'none',
+                  // backgroundColor: doorImg ? 'transparent' : '#f5e6d3'
+                }}
+              >
+                {/* {!doorImg && <div style={{color: '#999', fontSize: '14px'}}>Cửa (Import hình)</div>} */}
+              </div>
+              
+              {/* Ổ KHÓA */}
+              <div 
+                style={{
+                  ...styles.lockOnDoor,
+                  backgroundImage: lockImg ? `url(${lockImg})` : 'none',
+                  backgroundColor: lockImg ? 'transparent' : 'rgba(255,140,0,0.9)',
+                  opacity: isCorrect ? 0 : 1,
+                  cursor: "pointer",
+                  filter: isWrong
+                    ? "brightness(1.3) drop-shadow(0 0 50px rgba(255,0,0,1))"
+                    : isCorrect
+                    ? "brightness(1.3) drop-shadow(0 0 50px rgba(0,255,0,1))"
+                    : hovered === "lock" 
+                    ? "brightness(1.3) drop-shadow(0 0 40px rgba(255,140,0,0.9))" 
+                    : "brightness(1)",
+                  transform: hovered === "lock" ? "scale(1.1)" : "scale(1)",
+                  transition: "all 0.3s ease"
+                }}
+                onClick={() => !isCorrect && setLockOpen(true)}
+                onMouseEnter={() => setHovered("lock")}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {!lockImg && <div style={{fontSize: '2rem'}}>🔒</div>}
               </div>
             </div>
 
-            {/* Cửa với ổ khóa */}
-            <div
-              style={{
-                ...styles.doorWrapper,
-                filter: isWrong
-                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(255,0,0,0.9))"
-                  : isCorrect
-                  ? "brightness(1.3) drop-shadow(0 0 100px rgba(0,255,0,0.9))"
-                  : "brightness(0.7)",
-                transition: "all 0.5s ease"
-              }}
-            >
-              <div style={styles.doorFrame}>
-                <div style={styles.doorFrameTop}></div>
-                <div style={styles.doorFrameLeft}></div>
-                <div style={styles.doorFrameRight}></div>
-              </div>
-              <div style={styles.door3D}>
-                <div style={styles.doorPanel}>
-                  <div style={styles.doorLine1}></div>
-                  <div style={styles.doorLine2}></div>
-                </div>
-                
-                {/* Ổ khóa 3 số */}
-                <div 
-                  style={{
-                    ...styles.passwordLock,
-                    opacity: isCorrect ? 0 : 1,
-                    animation: isWrong
-                      ? "shake 0.5s ease"
-                      : isCorrect
-                      ? "unlocking 1s ease-out"
-                      : "none",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => !isCorrect && setLockOpen(true)}
-                  onMouseEnter={() => setHovered("lock")}
-                  onMouseLeave={() => setHovered(null)}
-                >
-                  <div style={{
-                    ...styles.lockScreen,
-                    transform: hovered === "lock" ? "scale(1.1)" : "scale(1)",
-                    boxShadow: hovered === "lock" 
-                      ? "inset 0 2px 15px rgba(0,255,0,0.5), 0 8px 30px rgba(0,0,0,0.9)"
-                      : "inset 0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9)"
-                  }}>
-                    <div style={styles.lockIcon}>🔒</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bàn làm việc */}
-            <div style={styles.desk}>
-              <div style={styles.deskTop}></div>
-              <div style={styles.deskLeg1}></div>
-              <div style={styles.deskLeg2}></div>
-            </div>
-
-            {/* Poster trên tường */}
+            {/* ========== KHUNG TRANH POSTER ========== */}
             <div
               style={{
                 ...styles.posterFrame,
+                backgroundImage: frameImg ? `url(${frameImg})` : 'none',
+                backgroundColor: frameImg ? 'transparent' : '#d4a574',
+                filter: hovered === "poster" ? "brightness(1.2) drop-shadow(0 0 40px rgba(255,140,0,0.8))" : "brightness(1)",
                 transform: hovered === "poster" ? "scale(1.05)" : "scale(1)",
-                boxShadow: hovered === "poster"
-                  ? "0 20px 60px rgba(139,0,0,0.8)"
-                  : "0 15px 50px rgba(139,0,0,0.5)"
+                transition: "all 0.3s ease"
               }}
               onClick={() => setPosterOpen(true)}
               onMouseEnter={() => setHovered("poster")}
               onMouseLeave={() => setHovered(null)}
             >
-              <div style={styles.posterIcon}>🖼️</div>
+              {!frameImg && <div style={{fontSize: '4rem'}}>🖼️</div>}
             </div>
           </div>
 
-          {/* Modal Poster */}
+          {/* ========== MODAL POSTER ========== */}
           {posterOpen && (
             <div style={styles.posterModal} onClick={() => setPosterOpen(false)}>
               <div style={styles.posterFullscreen} onClick={e => e.stopPropagation()}>
@@ -196,12 +176,17 @@ export default function Room7({ onComplete }) {
             </div>
           )}
 
-          {/* Modal nhập mật khẩu */}
+          {/* ========== MODAL NHẬP MẬT KHẨU (REDESIGNED) ========== */}
           {lockOpen && (
             <div style={styles.lockModal} onClick={() => setLockOpen(false)}>
               <div style={styles.lockPanel} onClick={e => e.stopPropagation()}>
                 <button style={styles.closeLockBtn} onClick={() => setLockOpen(false)}>✕</button>
                 
+                <div style={styles.lockPanelHeader}>
+                  {/* <div style={styles.lockPanelIcon}>🔐</div> */}
+                  <div style={styles.lockPanelTitle}>NHẬP MÃ BẢO MẬT</div>
+                </div>
+
                 {/* Màn hình hiển thị 3 số */}
                 <div style={styles.passwordDisplay}>
                   {[0, 1, 2].map((index) => (
@@ -209,20 +194,28 @@ export default function Room7({ onComplete }) {
                       key={index} 
                       style={{
                         ...styles.digitBox,
+                        background: password[index] 
+                          ? "linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%)"
+                          : "linear-gradient(135deg, #2a2520 0%, #1a1510 100%)",
                         border: isCorrect 
-                          ? "4px solid rgba(0,255,0,0.8)"
+                          ? "4px solid rgba(0,255,0,0.9)"
                           : isWrong
-                          ? "4px solid rgba(255,0,0,0.8)"
-                          : "4px solid rgba(0,255,0,0.3)",
+                          ? "4px solid rgba(255,0,0,0.9)"
+                          : password[index]
+                          ? "4px solid rgba(255,140,0,0.8)"
+                          : "4px solid rgba(255,140,0,0.3)",
                         boxShadow: isCorrect
-                          ? "inset 0 4px 15px rgba(0,0,0,0.9), 0 0 30px rgba(0,255,0,0.8)"
+                          ? "0 0 30px rgba(0,255,0,0.8), inset 0 2px 10px rgba(0,0,0,0.5)"
                           : isWrong
-                          ? "inset 0 4px 15px rgba(0,0,0,0.9), 0 0 30px rgba(255,0,0,0.8)"
-                          : "inset 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,0,0.2)",
-                        animation: isWrong ? "digitShake 0.5s ease" : "none"
+                          ? "0 0 30px rgba(255,0,0,0.8), inset 0 2px 10px rgba(0,0,0,0.5)"
+                          : password[index]
+                          ? "0 0 25px rgba(255,140,0,0.6), inset 0 2px 10px rgba(0,0,0,0.5)"
+                          : "0 0 15px rgba(255,140,0,0.3), inset 0 2px 10px rgba(0,0,0,0.5)",
+                        color: password[index] ? "#fff" : "#666",
+                        textShadow: password[index] ? "0 0 10px rgba(255,255,255,0.8)" : "none"
                       }}
                     >
-                      {password[index] || "_"}
+                      {password[index] || "•"}
                     </div>
                   ))}
                 </div>
@@ -250,7 +243,7 @@ export default function Room7({ onComplete }) {
                   {/* Nút xóa và OK */}
                   <div style={styles.controlButtons}>
                     <button style={styles.backspaceBtn} onClick={handleBackspace}>
-                        XÓA
+                      XÓA
                     </button>
                     <button 
                       style={{
@@ -261,7 +254,7 @@ export default function Room7({ onComplete }) {
                       onClick={handlePasswordSubmit}
                       disabled={!password.every(d => d !== "")}
                     >
-                      NHẬP
+                      XÁC NHẬN
                     </button>
                   </div>
                 </div>
@@ -274,9 +267,9 @@ export default function Room7({ onComplete }) {
       {stage === "win" && (
         <div style={styles.screen}>
           <div style={styles.winBox}>
-            <h1 style={styles.winTitle}>🎉 MỞ KHÓA THÀNH CÔNG!</h1>
+            <h1 style={styles.winTitle}>MỞ KHÓA THÀNH CÔNG!</h1>
             <p style={styles.winText}>
-              Bạn đã tìm ra mật khẩu từ poster!
+              {/* Bạn đã tìm ra mật khẩu từ poster! */}
             </p>
             <div style={styles.secretMessage}>
               {correctPassword}
@@ -300,16 +293,24 @@ const styles = {
     userSelect: "none",
     background: "#000"
   },
+  roomContainer: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    overflow: "hidden"
+  },
   roomBg: {
     position: "absolute",
     inset: 0,
-    background: "linear-gradient(180deg, #000000 0%, #0a0a0a 30%, #050505 60%, #000 100%)",
+    background: "linear-gradient(180deg, #1a1410 0%, #2a1f18 30%, #1f1812 60%, #0f0a08 100%)",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
     zIndex: 1
   },
   fog: {
     position: "absolute",
     inset: 0,
-    background: "radial-gradient(ellipse at 50% 80%, rgba(40,40,60,0.25) 0%, transparent 60%)",
+    background: "radial-gradient(ellipse at 50% 80%, rgba(255,140,0,0.15) 0%, transparent 60%)",
     animation: "fogMove 15s ease-in-out infinite",
     pointerEvents: "none",
     zIndex: 2
@@ -321,22 +322,74 @@ const styles = {
     pointerEvents: "none",
     zIndex: 3
   },
-  chains: {
-    position: "absolute",
-    fontSize: "1.8rem",
-    color: "#333",
-    opacity: 0.3,
-    textShadow: "0 2px 8px rgba(0,0,0,0.9)",
-    animation: "swing 3s ease-in-out infinite",
-    zIndex: 6
+  
+  // ========== Ổ KHÓA (KHÔNG CÒN CỬA - CHỈ CÓ Ổ KHÓA) ==========
+  doorWrapper: {
+    position: "fixed",
+    top: "43vh",
+    left: "85%",
+    transform: "translateX(-50%)",
+    width: "100%",
+    height: "auto",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10
   },
+  // doorImage: {
+  //   display: "none" // Xóa hình cửa
+  // },
+  
+  // ========== Ổ KHÓA TO HƠN + DIỆN TÍCH RỘNG ==========
+  lockOnDoor: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "18vw",
+    height: "18vw",
+    minWidth: "80px",
+    minHeight: "80px",
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    transition: "all 0.3s ease",
+    zIndex: 20
+  },
+  
+  // ========== KHUNG TRANH TO HƠN + CÓ VIỀN ==========
+  posterFrame: {
+    position: "fixed",
+    top: "20%",
+    left: "10%",
+    width: "20vw",      // ← TĂNG từ 15vw lên 22vw
+    height: "60vh",     // ← TĂNG từ 22vh lên 32vh
+    minWidth: "200px",  // ← TĂNG từ 120px lên 200px
+    minHeight: "250px", // ← TĂNG từ 160px lên 250px
+    backgroundSize: "cover", // ← Đổi từ contain sang cover
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "12px",
+    border: "8px solid #8b6f47", // ← THÊM VIỀN NÂU CAM
+    boxShadow: "0 8px 25px rgba(0,0,0,0.7), inset 0 0 30px rgba(255,140,0,0.1)", // ← Shadow đẹp hơn
+    zIndex: 7
+  },
+  
   screen: {
     width: "100%",
     height: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "#666",
+    color: "#d4a574",
     animation: "fadeIn 0.8s ease-in",
     zIndex: 100
   },
@@ -344,27 +397,27 @@ const styles = {
     maxWidth: "700px",
     textAlign: "center",
     padding: "40px",
-    background: "rgba(10, 10, 10, 0.95)",
-    border: "4px solid rgba(139,0,0,0.6)",
+    background: "rgba(20, 15, 10, 0.95)",
+    border: "4px solid rgba(255,140,0,0.6)",
     borderRadius: "15px",
     boxShadow: "0 25px 80px rgba(0,0,0,0.95)"
   },
   introTitle: {
     fontSize: "2.5rem",
-    color: "#8B0000",
+    color: "#ff8c00",
     marginBottom: "30px",
-    textShadow: "0 0 35px rgba(139, 0, 0, 0.8)"
+    textShadow: "0 0 35px rgba(255, 140, 0, 0.8)"
   },
   storyText: {
     fontSize: "1.3rem",
     lineHeight: "2",
     marginBottom: "20px",
-    color: "#999"
+    color: "#d4a574"
   },
   continueBtn: {
     marginTop: "30px",
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
-    border: "3px solid rgba(139,0,0,0.8)",
+    background: "linear-gradient(135deg, rgba(255,140,0,0.8), rgba(255,100,0,0.9))",
+    border: "3px solid rgba(255,140,0,0.8)",
     color: "#fff",
     padding: "16px 45px",
     fontSize: "1.2rem",
@@ -373,213 +426,6 @@ const styles = {
     transition: "all 0.3s ease",
     fontWeight: "bold",
     fontFamily: "Arial, sans-serif"
-  },
-  roomContainer: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
-    overflow: "hidden"
-  },
-  ceilingLamp: {
-    position: "absolute",
-    top: "3%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 8
-  },
-  lampCord: {
-    width: "3px",
-    height: "60px",
-    background: "linear-gradient(to bottom, #222, #000)",
-    margin: "0 auto",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.9)"
-  },
-  lampShade: {
-    position: "relative",
-    width: "100px",
-    height: "50px"
-  },
-  lampTop: {
-    width: "40px",
-    height: "10px",
-    background: "linear-gradient(135deg, #2a2520, #1a1510)",
-    borderRadius: "50%",
-    margin: "0 auto",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.8)"
-  },
-  lampBottom: {
-    width: "100px",
-    height: "50px",
-    background: "linear-gradient(135deg, #3a3025 0%, #2a2520 50%, #1a1510 100%)",
-    borderRadius: "0 0 50% 50%",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.9)",
-    border: "2px solid #000",
-    margin: "0 auto"
-  },
-  lampGlow: {
-    width: "200px",
-    height: "200px",
-    background: "radial-gradient(circle, rgba(139,0,0,0.15), transparent 70%)",
-    position: "absolute",
-    bottom: "-60px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    animation: "lightFlicker 4s ease-in-out infinite",
-    pointerEvents: "none"
-  },
-  doorWrapper: {
-    position: "absolute",
-    top: "10%",
-    right: "3%",
-    zIndex: 10
-  },
-  doorFrame: {
-    position: "absolute",
-    width: "140px",
-    height: "200px",
-    top: "-10px",
-    left: "-10px",
-    zIndex: -1
-  },
-  doorFrameTop: {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    width: "100%",
-    height: "10px",
-    background: "linear-gradient(to bottom, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "6px 6px 0 0",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.95)"
-  },
-  doorFrameLeft: {
-    position: "absolute",
-    left: "0",
-    top: "0",
-    width: "10px",
-    height: "80%",
-    background: "linear-gradient(to right, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "6px 0 0 4px",
-    boxShadow: "inset -5px 0 15px rgba(0,0,0,0.9)"
-  },
-  doorFrameRight: {
-    position: "absolute",
-    right: "0",
-    top: "0",
-    width: "10px",
-    height: "80%",
-    background: "linear-gradient(to left, #000 0%, #0a0a0a 60%, #1a1510 100%)",
-    borderRadius: "0 6px 4px 0",
-    boxShadow: "inset 5px 0 15px rgba(0,0,0,0.9)"
-  },
-  door3D: {
-    position: "relative",
-    width: "120px",
-    height: "180px"
-  },
-  doorPanel: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 15%, #0f0a08 35%, #050302 50%, #0f0a08 65%, #1a1510 85%, #2a2520 100%)",
-    border: "4px solid #1a1510",
-    borderRadius: "8px 8px 2px 2px",
-    boxShadow: "inset 0 3px 20px rgba(0,0,0,0.95), 0 12px 50px rgba(0,0,0,0.9)"
-  },
-  doorLine1: {
-    position: "absolute",
-    width: "calc(100% - 15px)",
-    height: "2px",
-    top: "38%",
-    left: "8px",
-    background: "linear-gradient(90deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
-    opacity: 0.6
-  },
-  doorLine2: {
-    position: "absolute",
-    width: "2px",
-    height: "calc(100% - 15px)",
-    left: "50%",
-    top: "8px",
-    background: "linear-gradient(180deg, transparent, #0f0a08 20%, #0f0a08 80%, transparent)",
-    opacity: 0.6
-  },
-  passwordLock: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    transition: "all 0.4s ease",
-    zIndex: 20
-  },
-  lockScreen: {
-    width: "50px",
-    height: "50px",
-    background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",
-    borderRadius: "50%",
-    boxShadow: "inset 0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9)",
-    border: "3px solid #000",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.3s ease"
-  },
-  lockIcon: {
-    fontSize: "1.5rem",
-    filter: "drop-shadow(0 0 8px rgba(255,200,0,0.6))"
-  },
-  desk: {
-    position: "absolute",
-    bottom: "18%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 5
-  },
-  deskTop: {
-    width: "450px",
-    height: "25px",
-    background: "linear-gradient(135deg, #3a2520 0%, #2a1510 50%, #1a0a08 100%)",
-    borderRadius: "12px",
-    boxShadow: "0 12px 45px rgba(0,0,0,0.9)",
-    border: "3px solid #000"
-  },
-  deskLeg1: {
-    position: "absolute",
-    left: "50px",
-    top: "25px",
-    width: "20px",
-    height: "140px",
-    background: "linear-gradient(to bottom, #2a1510 0%, #1a0a08 100%)",
-    boxShadow: "3px 0 12px rgba(0,0,0,0.9)"
-  },
-  deskLeg2: {
-    position: "absolute",
-    right: "50px",
-    top: "25px",
-    width: "20px",
-    height: "140px",
-    background: "linear-gradient(to bottom, #2a1510 0%, #1a0a08 100%)",
-    boxShadow: "-3px 0 12px rgba(0,0,0,0.9)"
-  },
-  posterFrame: {
-    position: "absolute",
-    top: "25%",
-    left: "20%",
-    width: "120px",
-    height: "160px",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 100%)",
-    border: "6px solid #1a1510",
-    borderRadius: "8px",
-    boxShadow: "0 15px 50px rgba(139,0,0,0.5)",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 7
-  },
-  posterIcon: {
-    fontSize: "4rem",
-    filter: "drop-shadow(0 0 15px rgba(139,0,0,0.6))"
   },
   posterModal: {
     position: "fixed",
@@ -595,10 +441,10 @@ const styles = {
     position: "relative",
     maxWidth: "90%",
     maxHeight: "90vh",
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 100%)",
+    background: "linear-gradient(135deg, #3a2f25 0%, #2a1f18 100%)",
     padding: "20px",
     borderRadius: "15px",
-    border: "6px solid rgba(139,0,0,0.6)",
+    border: "6px solid rgba(255,140,0,0.6)",
     boxShadow: "0 30px 100px rgba(0,0,0,0.98)"
   },
   closePosterBtn: {
@@ -607,7 +453,7 @@ const styles = {
     right: "10px",
     width: "40px",
     height: "40px",
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
+    background: "linear-gradient(135deg, rgba(255,140,0,0.8), rgba(255,100,0,0.9))",
     border: "3px solid #000",
     borderRadius: "50%",
     color: "#fff",
@@ -638,10 +484,10 @@ const styles = {
     backdropFilter: "blur(12px)"
   },
   lockPanel: {
-    background: "linear-gradient(135deg, #2a2520 0%, #1a1510 35%, #0f0a08 70%, #050302 100%)",
-    border: "6px solid rgba(139,0,0,0.6)",
+    background: "linear-gradient(135deg, #3a2f25 0%, #2a1f18 50%, #1a1410 100%)",
+    border: "6px solid rgba(255,140,0,0.6)",
     borderRadius: "20px",
-    padding: "40px",
+    padding: "35px",
     maxWidth: "450px",
     width: "90%",
     boxShadow: "0 30px 100px rgba(0,0,0,0.98)",
@@ -653,7 +499,7 @@ const styles = {
     right: "15px",
     width: "35px",
     height: "35px",
-    background: "linear-gradient(135deg, rgba(139,0,0,0.8), rgba(80,0,0,0.9))",
+    background: "linear-gradient(135deg, rgba(255,140,0,0.8), rgba(255,100,0,0.9))",
     border: "3px solid #000",
     borderRadius: "50%",
     color: "#fff",
@@ -665,27 +511,42 @@ const styles = {
     transition: "all 0.3s ease",
     fontFamily: "Arial, sans-serif"
   },
+  lockPanelHeader: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: "25px"
+  },
+  lockPanelIcon: {
+    fontSize: "3rem",
+    marginBottom: "10px",
+    filter: "drop-shadow(0 0 20px rgba(255,140,0,0.8))"
+  },
+  lockPanelTitle: {
+    fontSize: "1.5rem",
+    color: "#f5e6d3",
+    fontWeight: "bold",
+    textAlign: "center",
+    textShadow: "0 0 20px rgba(255,140,0,0.6)",
+    fontFamily: "Arial, sans-serif"
+  },
   passwordDisplay: {
     display: "flex",
     justifyContent: "center",
-    gap: "20px",
+    gap: "15px",
     marginBottom: "30px"
   },
   digitBox: {
-    width: "80px",
-    height: "100px",
-    background: "rgba(10,10,10,0.9)",
-    border: "4px solid rgba(0,255,0,0.3)",
+    width: "70px",
+    height: "90px",
     borderRadius: "12px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "3rem",
-    color: "#0f0",
+    fontSize: "2.5rem",
     fontFamily: "monospace",
     fontWeight: "bold",
-    boxShadow: "inset 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,0,0.2)",
-    textShadow: "0 0 15px #0f0"
+    transition: "all 0.3s ease"
   },
   numberPadContainer: {
     display: "flex",
@@ -699,18 +560,18 @@ const styles = {
     justifyContent: "center"
   },
   numberButton: {
-    width: "80px",
-    height: "70px",
-    background: "linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)",
-    border: "3px solid #444",
+    width: "75px",
+    height: "65px",
+    background: "linear-gradient(135deg, #d4a574 0%, #b8935e 100%)",
+    border: "3px solid #a67c52",
     borderRadius: "10px",
     color: "#fff",
-    fontSize: "1.8rem",
+    fontSize: "1.6rem",
     fontWeight: "bold",
     cursor: "pointer",
     transition: "all 0.2s ease",
     fontFamily: "Arial, sans-serif",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.8)"
+    boxShadow: "0 5px 15px rgba(0,0,0,0.8), inset 0 1px 3px rgba(255,255,255,0.3)"
   },
   controlButtons: {
     display: "flex",
@@ -718,12 +579,12 @@ const styles = {
   },
   backspaceBtn: {
     flex: 1,
-    height: "60px",
-    background: "linear-gradient(135deg, #666 0%, #444 100%)",
-    border: "3px solid #555",
+    height: "55px",
+    background: "linear-gradient(135deg, #8b6f47 0%, #6b5739 100%)",
+    border: "3px solid #5a4830",
     borderRadius: "10px",
     color: "#fff",
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     fontWeight: "bold",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -732,17 +593,17 @@ const styles = {
   },
   submitBtn: {
     flex: 1,
-    height: "60px",
-    background: "linear-gradient(135deg, rgba(0,150,0,0.8), rgba(0,100,0,0.9))",
-    border: "3px solid rgba(0,200,0,0.8)",
+    height: "55px",
+    background: "linear-gradient(135deg, rgba(255,140,0,0.9), rgba(255,100,0,1))",
+    border: "3px solid rgba(255,120,0,0.9)",
     borderRadius: "10px",
     color: "#fff",
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     fontWeight: "bold",
     cursor: "pointer",
     transition: "all 0.3s ease",
     fontFamily: "Arial, sans-serif",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.8)"
+    boxShadow: "0 5px 15px rgba(0,0,0,0.8), inset 0 1px 3px rgba(255,255,255,0.3)"
   },
   winBox: {
     textAlign: "center",
@@ -750,32 +611,32 @@ const styles = {
   },
   winTitle: {
     fontSize: "4rem",
-    color: "#8B0000",
-    textShadow: "0 0 60px rgba(139,0,0,0.9)",
+    color: "#ff8c00",
+    textShadow: "0 0 60px rgba(255,140,0,0.9)",
     marginBottom: "30px",
     animation: "bounce 1s ease infinite"
   },
   winText: {
     fontSize: "1.6rem",
     marginBottom: "25px",
-    color: "#999"
+    color: "#d4a574"
   },
   secretMessage: {
     fontSize: "3rem",
-    color: "#8B0000",
+    color: "#ff8c00",
     fontWeight: "bold",
-    textShadow: "0 0 50px rgba(139,0,0,1)",
+    textShadow: "0 0 50px rgba(255,140,0,1)",
     marginBottom: "20px",
     padding: "25px",
-    background: "rgba(139,0,0,0.1)",
-    border: "4px solid rgba(139,0,0,0.6)",
+    background: "rgba(255,140,0,0.1)",
+    border: "4px solid rgba(255,140,0,0.6)",
     borderRadius: "15px",
     letterSpacing: "8px",
     fontFamily: "Arial, sans-serif"
   },
   winSubtext: {
     fontSize: "1.3rem",
-    color: "#666",
+    color: "#d4a574",
     marginBottom: "15px"
   },
   sparkles: {
@@ -791,23 +652,9 @@ styleSheet.textContent = `
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  @keyframes lightFlicker {
-    0%, 100% { opacity: 1; }
-    10% { opacity: 0.2; }
-    12% { opacity: 1; }
-    50% { opacity: 0.8; }
-    60% { opacity: 0.4; }
-    62% { opacity: 1; }
-    70% { opacity: 0.5; }
-    72% { opacity: 1; }
-  }
   @keyframes fogMove {
     0%, 100% { transform: translateX(0) scale(1); }
     50% { transform: translateX(20px) scale(1.05); }
-  }
-  @keyframes swing {
-    0%, 100% { transform: rotate(-3deg); }
-    50% { transform: rotate(3deg); }
   }
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -817,45 +664,36 @@ styleSheet.textContent = `
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.3; transform: scale(0.9); }
   }
-  @keyframes unlocking {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    50% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0.5; }
-    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
-  }
-  @keyframes shake {
-    0%, 100% { transform: translate(-50%, -50%); }
-    10%, 30%, 50%, 70%, 90% { transform: translate(-55%, -50%); }
-    20%, 40%, 60%, 80% { transform: translate(-45%, -50%); }
-  }
   
   .continueBtn:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 40px rgba(139,0,0,0.9);
+    box-shadow: 0 10px 40px rgba(255,140,0,0.9);
   }
   
   .closePosterBtn:hover, .closeLockBtn:hover {
-    transform: rotate(90deg) scale(1.1);
-    background: linear-gradient(135deg, rgba(180,0,0,0.9), rgba(120,0,0,0.95));
+    transform: scale(1.15);
+    background: linear-gradient(135deg, rgba(255,160,0,0.9), rgba(255,120,0,1));
   }
   
   .numberButton:hover {
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
-    border-color: #666;
+    transform: scale(1.08);
+    background: linear-gradient(135deg, #e0b080 0%, #c49d6a 100%);
+    box-shadow: 0 7px 20px rgba(0,0,0,0.9), inset 0 1px 5px rgba(255,255,255,0.4);
   }
   
   .numberButton:active {
     transform: scale(0.95);
   }
   
-  .clearBtn:hover {
-    background: linear-gradient(135deg, #777 0%, #555 100%);
+  .backspaceBtn:hover {
+    background: linear-gradient(135deg, #9b7f57 0%, #7b6549 100%);
     transform: scale(1.05);
   }
   
   .submitBtn:hover:not(:disabled) {
-    background: linear-gradient(135deg, rgba(0,180,0,0.9), rgba(0,130,0,1));
+    background: linear-gradient(135deg, rgba(255,160,0,1), rgba(255,120,0,1));
     transform: scale(1.05);
+    box-shadow: 0 7px 20px rgba(255,140,0,0.6), inset 0 1px 5px rgba(255,255,255,0.4);
   }
 `;
 document.head.appendChild(styleSheet);
