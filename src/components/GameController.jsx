@@ -111,7 +111,7 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Version: 2.6 | Update: [20/12/2025]
+            Version: 2.7 | Update: [20/12/2025]
           </p>
           <p style={styles.instructionText}>
             MỌI NGƯỜI LƯU Ý CHƠI Ở ĐỘ RỘNG ZOOM: 67% LÀ ĐẸP NHẤT NHÉ !!!

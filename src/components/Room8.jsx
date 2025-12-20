@@ -111,22 +111,40 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
   useEffect(() => {
     if (boardOpen && !initializedPieces.current) {
       const piecesPerRow = 4;
-      setPieces(prev => prev.map((p, i) => ({
-        ...p,
-        x: (i % piecesPerRow) * 160 + 100,
-        y: Math.floor(i / piecesPerRow) * 90 + window.innerHeight - 400
-      })));
+      const startX = 100;
+      const startY = window.innerHeight - 400;
+      
+      setPieces(prev => prev.map((p, i) => {
+        const col = i % piecesPerRow;
+        const row = Math.floor(i / piecesPerRow);
+        return {
+          ...p,
+          x: col * 160 + startX,
+          y: row * 90 + startY
+        };
+      }));
+      
       initializedPieces.current = true;
+      console.log('Pieces initialized:', pieces.length);
     }
   }, [boardOpen]);
 
   const handlePieceMouseDown = (e, pieceId) => {
+    e.preventDefault();
     e.stopPropagation();
-    const piece = pieces.find(p => p.id === pieceId);
-    if (!piece) return;
     
-    const clientX = e.clientX || e.touches?.[0]?.clientX;
-    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    console.log('Clicked piece ID:', pieceId);
+    
+    const piece = pieces.find(p => p.id === pieceId);
+    if (!piece) {
+      console.error('Piece not found:', pieceId);
+      return;
+    }
+    
+    console.log('Piece found:', piece);
+    
+    const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
     
     setDragging(pieceId);
     setDragOffset({
@@ -155,9 +173,12 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
   };
 
   const handleMouseMove = (e) => {
-    if (dragging) {
-      const clientX = e.clientX || e.touches?.[0]?.clientX;
-      const clientY = e.clientY || e.touches?.[0]?.clientY;
+    if (dragging !== null) {
+      e.preventDefault();
+      const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
+      
+      console.log('Dragging piece:', dragging, 'to', clientX, clientY);
       
       setPieces(prev => prev.map(p => 
         p.id === dragging 
@@ -165,8 +186,9 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
           : p
       ));
     } else if (draggingNote) {
-      const clientX = e.clientX || e.touches?.[0]?.clientX;
-      const clientY = e.clientY || e.touches?.[0]?.clientY;
+      e.preventDefault();
+      const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
       
       setNotePosition({
         x: clientX - noteDragOffset.x,
@@ -176,7 +198,7 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
   };
 
   const handleMouseUp = () => {
-    if (dragging) {
+    if (dragging !== null) {
       if (!boardRef.current) {
         setDragging(null);
         return;
@@ -233,7 +255,7 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
   };
 
   useEffect(() => {
-    if (dragging || draggingNote) {
+    if (dragging !== null || draggingNote) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
       window.addEventListener("touchmove", handleMouseMove);
@@ -248,9 +270,10 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
   }, [dragging, draggingNote, dragOffset, noteDragOffset, pieces, board, notePosition]);
 
   const handleNoteMouseDown = (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    const clientX = e.clientX || e.touches?.[0]?.clientX;
-    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
     
     setDraggingNote(true);
     setNoteDragOffset({
@@ -392,8 +415,8 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
 
             {/* Board modal overlay */}
             {boardOpen && (
-              <div style={styles.boardModal} onClick={() => setBoardOpen(false)}>
-                <div style={styles.boardModalContent} onClick={e => e.stopPropagation()}>
+              <div style={styles.boardModal}>
+                <div style={styles.boardModalContent}>
                   <button style={styles.closeBoardBtn} onClick={() => setBoardOpen(false)}>✕</button>
                   
                   {/* Board */}
@@ -434,7 +457,8 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
                         left: piece.x,
                         top: piece.y,
                         cursor: dragging === piece.id ? 'grabbing' : 'grab',
-                        zIndex: dragging === piece.id ? 1000 : 100
+                        zIndex: dragging === piece.id ? 1000 : 100,
+                        pointerEvents: 'auto'
                       }}
                       onMouseDown={(e) => handlePieceMouseDown(e, piece.id)}
                       onTouchStart={(e) => handlePieceMouseDown(e, piece.id)}
@@ -501,18 +525,43 @@ Mật khẩu cửa tiệm là những chữ viết tắt của tên cửa tiệm
                   maxWidth: '80vw',
                   maxHeight: '80vh',
                   zIndex: 510,
-                  cursor: draggingNote ? 'grabbing' : 'default'
+                  cursor: draggingNote ? 'grabbing' : 'default',
+                  padding: 0
                 }}
               >
                 <div 
-                  style={styles.noteTitle} 
+                  style={{
+                    ...styles.noteTitle,
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2,
+                    background: '#fff5f5',
+                    margin: 0,
+                    padding: '20px 60px 20px 40px',
+                    borderBottom: '3px solid rgba(219,112,147,0.5)',
+                    borderRadius: '20px 20px 0 0'
+                  }} 
                   onMouseDown={handleNoteMouseDown}
                   onTouchStart={handleNoteMouseDown}
                 >
                   GHI CHÚ ĐIỀU TRA
+                  <button 
+                    style={{
+                      ...styles.closeNote,
+                      position: 'absolute',
+                      top: '50%',
+                      right: '15px',
+                      transform: 'translateY(-50%)'
+                    }} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setNoteOpen(false);
+                    }}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button style={styles.closeNote} onClick={() => setNoteOpen(false)}>✕</button>
-                <pre style={styles.noteContent}>{noteContent}</pre>
+                <pre style={{...styles.noteContent, padding: '40px'}}>{noteContent}</pre>
               </div>
             )}
           </div>
@@ -633,7 +682,6 @@ const styles = {
     fontWeight: "bold",
     fontFamily: "'Noto Serif', Georgia, serif"
   },
-
   noteOnFloor: {
     position: "fixed",
     bottom: "12vh",
