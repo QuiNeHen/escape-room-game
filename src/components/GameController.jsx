@@ -7,6 +7,7 @@ import Room4 from "./Room4";
 import Room5 from "./Room5";
 import Room6 from "./Room6";
 import Room7 from "./Room7";
+import Room8 from "./Room8";
 import QRImg from "../Img/QR.jpg";
 
 // Load Google Fonts hỗ trợ tiếng Việt
@@ -40,13 +41,14 @@ export default function GameController() {
   }, []);
 
   const startGame = () => setCurrentScreen("instructions");
-  const goToRoom1 = () => setCurrentScreen("room1");
+  const goToRoom1 = () => setCurrentScreen("room8");
   const goToRoom2 = () => setCurrentScreen("room2");
   const goToRoom3 = () => setCurrentScreen("room3");
   const goToRoom4 = () => setCurrentScreen("room4");
   const goToRoom5 = () => setCurrentScreen("room5");
   const goToRoom6 = () => setCurrentScreen("room6");
   const goToRoom7 = () => setCurrentScreen("room7");
+  const goToRoom8 = () => setCurrentScreen("room8");
   const gameComplete = () => {
     setCurrentScreen("finale");
   };
@@ -61,7 +63,8 @@ export default function GameController() {
       {currentScreen === "room4" && <Room4 onComplete={goToRoom5} />}
       {currentScreen === "room5" && <Room5 onComplete={goToRoom6} />}
       {currentScreen === "room6" && <Room6 onComplete={goToRoom7} />}
-      {currentScreen === "room7" && <Room7 onComplete={gameComplete} />}
+      {currentScreen === "room7" && <Room7 onComplete={goToRoom8} />}
+      {currentScreen === "room8" && <Room8 onComplete={gameComplete} />}
       {currentScreen === "finale" && <FinaleScreen onRestart={() => setCurrentScreen("title")} />}
     </>
   );
@@ -89,6 +92,9 @@ function InstructionsScreen({ onContinue }) {
             • Bạn sẽ phải vượt qua các phòng với các câu đố logic khác nhau
           </p>
           <p style={styles.instructionText}>
+            • Hiện tại đang có 8 phòng !
+          </p>
+          <p style={styles.instructionText}>
             • Quan sát kỹ mọi chi tiết trong phòng để tìm manh mối
           </p>
           <p style={styles.instructionText}>
@@ -105,7 +111,7 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Version: 2.4 | Update: [19/12/2025]
+            Version: 2.6 | Update: [20/12/2025]
           </p>
           <p style={styles.instructionText}>
             MỌI NGƯỜI LƯU Ý CHƠI Ở ĐỘ RỘNG ZOOM: 67% LÀ ĐẸP NHẤT NHÉ !!!
