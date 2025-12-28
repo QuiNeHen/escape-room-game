@@ -8,6 +8,7 @@ import Room5 from "./Room5";
 import Room6 from "./Room6";
 import Room7 from "./Room7";
 import Room8 from "./Room8";
+import Room9 from "./Room9"; // ← THÊM IMPORT ROOM 9
 import QRImg from "../Img/QR.jpg";
 
 // Load Google Fonts hỗ trợ tiếng Việt
@@ -49,6 +50,7 @@ export default function GameController() {
   const goToRoom6 = () => setCurrentScreen("room6");
   const goToRoom7 = () => setCurrentScreen("room7");
   const goToRoom8 = () => setCurrentScreen("room8");
+  const goToRoom9 = () => setCurrentScreen("room9"); // ← THÊM FUNCTION CHO ROOM 9
   const gameComplete = () => {
     setCurrentScreen("finale");
   };
@@ -64,7 +66,8 @@ export default function GameController() {
       {currentScreen === "room5" && <Room5 onComplete={goToRoom6} />}
       {currentScreen === "room6" && <Room6 onComplete={goToRoom7} />}
       {currentScreen === "room7" && <Room7 onComplete={goToRoom8} />}
-      {currentScreen === "room8" && <Room8 onComplete={gameComplete} />}
+      {currentScreen === "room8" && <Room8 onComplete={goToRoom9} />} {/* ← ĐỔI TỪ gameComplete SANG goToRoom9 */}
+      {currentScreen === "room9" && <Room9 onComplete={gameComplete} />} {/* ← THÊM ROOM 9 */}
       {currentScreen === "finale" && <FinaleScreen onRestart={() => setCurrentScreen("title")} />}
     </>
   );
@@ -92,7 +95,7 @@ function InstructionsScreen({ onContinue }) {
             • Bạn sẽ phải vượt qua các phòng với các câu đố logic khác nhau
           </p>
           <p style={styles.instructionText}>
-            • Hiện tại đang có 8 phòng !
+            • Hiện tại đang có 9 phòng ! {/* ← ĐỔI TỪ 8 THÀNH 9 */}
           </p>
           <p style={styles.instructionText}>
             • Quan sát kỹ mọi chi tiết trong phòng để tìm manh mối
@@ -111,7 +114,7 @@ function InstructionsScreen({ onContinue }) {
             Game được thiết kế và phát triển bởi [GỌI TÔI LÀ DEMO]
           </p>
           <p style={styles.instructionText}>
-            Version: 2.7 | Update: [20/12/2025]
+            Version: 3.1 | Update: [28/12/2025] {/* ← CẬP NHẬT VERSION */}
           </p>
           <p style={styles.instructionText}>
             MỌI NGƯỜI LƯU Ý CHƠI Ở ĐỘ RỘNG ZOOM: 67% LÀ ĐẸP NHẤT NHÉ !!!
@@ -139,7 +142,7 @@ function FinaleScreen({ onRestart }) {
       <div style={styles.finaleFog}></div>
       <div style={styles.finaleVignette}></div>
       <div style={styles.finaleContent}>
-        <h1 style={styles.finaleTitle}>🎉 CẢM ƠN BẠN ĐÃ CHƠI! 🎉</h1>
+        <h1 style={styles.finaleTitle}>🎉 CẢM ƠN BẠN 🎉</h1>
         
         <div style={styles.feedbackSection}>
           {/* QR Code */}
@@ -177,7 +180,7 @@ function FinaleScreen({ onRestart }) {
         </div>
 
         <button style={styles.restartBtn} onClick={onRestart}>
-          🔄 CHƠI LẠI
+          CHƠI LẠI
         </button>
       </div>
     </div>
